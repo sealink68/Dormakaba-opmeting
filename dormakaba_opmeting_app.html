@@ -194,58 +194,69 @@
 <body>
 
     <div class="navbar no-print">
-        <button type="button" class="navbar-btn" onclick="resetSchetsEnOpties(true)">Wis Alles</button>
-        <div class="navbar-title">Dormakaba Opmeting</div>
-        <button class="navbar-btn font-semibold" onclick="window.print()">Print PDF</button>
+        <button type="button" class="navbar-btn" onclick="resetSchetsEnOpties(true)" data-i18n="nav_clear">Wis Alles</button>
+        
+        <!-- Language Toggle -->
+        <div class="flex items-center gap-2 mx-2">
+            <span class="text-[10px] font-bold text-[#007AFF]" id="lang-lbl-nl">NL</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="lang-toggle" class="sr-only peer" onchange="toggleLanguage()">
+              <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#007AFF]"></div>
+            </label>
+            <span class="text-[10px] font-bold text-gray-400" id="lang-lbl-fr">FR</span>
+        </div>
+
+        <button class="navbar-btn font-semibold" onclick="window.print()" data-i18n="nav_print">Print PDF</button>
     </div>
 
     <div class="print-only text-center py-4 border-b-2 border-black mb-4">
-        <h1 class="text-2xl font-bold uppercase tracking-wider">Dormakaba Opmetingsblad</h1>
-        <p class="text-sm">Vervanging / Nieuwe Installatie <span id="print-deurlocatie" class="font-bold ml-2"></span></p>
+        <h1 class="text-2xl font-bold uppercase tracking-wider" data-i18n="print_title">Dormakaba Opmetingsblad</h1>
+        <p class="text-sm"><span data-i18n="print_subtitle">Vervanging / Nieuwe Installatie</span> <span id="print-deurlocatie" class="font-bold ml-2"></span></p>
     </div>
 
     <form id="opmeting-form" class="pb-8">
         
-        <div class="ios-header">Dossier & Klant</div>
+        <div class="ios-header" data-i18n="hdr_dossier">Dossier & Klant</div>
         <div id="klant-group" class="ios-group">
             <div class="ios-row">
-                <div class="ios-label">Werf / Chantier</div>
-                <input type="text" class="ios-input" placeholder="Naam werf">
+                <div class="ios-label" data-i18n="lbl_werf">Werf / Chantier</div>
+                <input type="text" class="ios-input" data-i18n-placeholder="ph_werf" placeholder="Naam werf">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Datum opm.</div>
+                <div class="ios-label" data-i18n="lbl_datum">Datum opm.</div>
                 <input type="date" class="ios-input">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Dossiernr.</div>
-                <input type="text" class="ios-input" placeholder="bv. 12345">
+                <div class="ios-label" data-i18n="lbl_dossier">Dossiernr.</div>
+                <input type="text" class="ios-input" data-i18n-placeholder="ph_dossier" placeholder="bv. 12345">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Contactpersoon</div>
-                <input type="text" class="ios-input" placeholder="Naam">
+                <div class="ios-label" data-i18n="lbl_contact">Contactpersoon</div>
+                <input type="text" class="ios-input" data-i18n-placeholder="ph_naam" placeholder="Naam">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Telefoon</div>
+                <div class="ios-label" data-i18n="lbl_telefoon">Telefoon</div>
                 <input type="tel" class="ios-input" placeholder="04xx xx xx xx">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Locatie</div>
-                <input type="text" class="ios-input" placeholder="Straat + Gem.">
+                <div class="ios-label" data-i18n="lbl_locatie">Locatie</div>
+                <input type="text" class="ios-input" data-i18n-placeholder="ph_locatie" placeholder="Straat + Gem.">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Deurlocatie (Gebouw)</div>
-                <input type="text" id="deurlocatie" class="ios-input" placeholder="bv. Hoofdingang, Gang 2">
+                <div class="ios-label" data-i18n="lbl_deurlocatie">Deurlocatie (Gebouw)</div>
+                <input type="text" id="deurlocatie" class="ios-input" data-i18n-placeholder="ph_deurlocatie" placeholder="bv. Hoofdingang, Gang 2">
             </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-right: 16px; margin-top: 24px; margin-bottom: 8px;" class="no-print">
-            <div class="ios-header" style="margin: 0 0 0 32px;">Schets / Technische Visualisation (Live)</div>
-            <button type="button" onclick="resetSchetsEnOpties(false)" class="text-xs font-semibold text-red-500 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-200 active:bg-gray-50 transition-colors">
+            <div class="ios-header" style="margin: 0 0 0 32px;" data-i18n="hdr_schets">Schets / Technische Visualisation (Live)</div>
+            <button type="button" onclick="resetSchetsEnOpties(false)" class="text-xs font-semibold text-red-500 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-200 active:bg-gray-50 transition-colors" data-i18n="btn_reset">
                 ↺ Reset Velden
             </button>
         </div>
         
         <div class="ios-group bg-white p-4 flex justify-center mt-0">
+            <!-- SVG code remains unchanged as it utilizes numerical outputs primarily -->
             <svg id="door-visual" viewBox="-40 0 680 500" class="w-full h-auto max-w-xl mx-auto block">
                 <defs>
                     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -259,17 +270,17 @@
                     </marker>
                 </defs>
 
-                <!-- LH Dimension (Loophoogte) -->
+                <!-- LH Dimension -->
                 <line x1="-15" y1="90" x2="-15" y2="450" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
                 <rect x="-30" y="220" width="30" height="100" fill="white" opacity="0.9" />
                 <text id="svg-val-lh" x="-15" y="270" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF" transform="rotate(-90, -15, 270)">LH: -- mm</text>
 
-                <!-- TH Dimension (Total Height) -->
+                <!-- TH Dimension -->
                 <line x1="615" y1="50" x2="615" y2="450" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
                 <rect x="600" y="200" width="30" height="100" fill="white" opacity="0.9" />
                 <text id="svg-val-th" x="615" y="250" text-anchor="middle" font-size="14" font-weight="bold" fill="#007AFF" transform="rotate(-90, 615, 250)">TH: -- mm</text>
 
-                <!-- TB Dimension (Total Width) -->
+                <!-- TB Dimension -->
                 <line x1="50" y1="25" x2="550" y2="25" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
                 <rect x="230" y="15" width="140" height="20" fill="white" />
                 <text id="svg-val-tb" x="300" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF">TB: -- mm</text>
@@ -284,7 +295,7 @@
                 <text id="svg-val-kap" x="300" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Kap H: -- / D: --</text>
                 <text id="svg-val-ral" x="300" y="84" text-anchor="middle" font-size="11" font-weight="bold" fill="#333" opacity="0.8"></text>
                 
-                <!-- Swing Operators L & R (Draaideuren) -->
+                <!-- Swing Operators L & R -->
                 <g id="svg-swing-op-l" opacity="0">
                     <rect id="ed-box-l" x="0" y="42" width="0" height="20" fill="#1e293b" rx="3" stroke="#fff" stroke-width="1"/>
                     <text id="ed-txt-l" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">ED 100/250 (L)</text>
@@ -313,7 +324,6 @@
                     </g>
                 </g>
 
-                <!-- Locking Mechanisms on Kap (EM) -->
                 <g id="lock-em-kap" opacity="0">
                     <rect x="420" y="54" width="25" height="10" fill="#ef4444" rx="2" />
                     <circle cx="432" cy="59" r="2" fill="white" />
@@ -331,32 +341,15 @@
                 <g id="svg-group-spl">
                     <rect id="rect-spl-2" x="0" y="105" width="0" height="340" fill="#bae6fd" opacity="0.6" stroke="#0369a1" stroke-width="1.5" style="display:none;"/>
                     <rect id="rect-spl" x="0" y="95" width="0" height="350" fill="#bae6fd" opacity="0.9" stroke="#0284c7" stroke-width="2"/>
-                    
-                    <!-- Hinges for swing doors -->
-                    <g id="hinge-group-left" opacity="0">
-                        <rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/>
-                        <rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/>
-                    </g>
-                    <g id="hinge-group-right" opacity="0">
-                        <rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/>
-                        <rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/>
-                    </g>
-                    
+                    <g id="hinge-group-left" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+                    <g id="hinge-group-right" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
                     <text id="text-spl" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">SP L</text>
                     <text id="svg-val-spl-dim" y="255" text-anchor="middle" font-size="10" fill="#0369a1">-- x --</text>
-                    
-                    <!-- Green Sliding Direction Arrow -->
                     <line id="arrow-dir-spl" stroke="#10b981" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-green)" opacity="0"/>
-
-                    <!-- Floor Rails & Guides -->
                     <g id="rail-u-l" opacity="0"><rect x="50" y="430" width="100" height="12" fill="#f59e0b" rx="2"/><text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">U-Rail</text></g>
                     <g id="rail-l-l" opacity="0"><rect x="50" y="430" width="100" height="12" fill="#10b981" rx="2"/><text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">L-Rail</text></g>
                     <g id="rail-omega-l" opacity="0"><rect x="50" y="430" width="100" height="12" fill="#6366f1" rx="2"/><text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Omega-rail</text></g>
-
-                    <g class="lock-vloer" id="lock-vloer-group-l" opacity="0">
-                        <rect id="lock-vl" x="180" y="420" width="30" height="15" fill="#ef4444" rx="2"/>
-                        <circle id="lock-vlc" cx="195" cy="427" r="3" fill="white"/>
-                    </g>
+                    <g class="lock-vloer" id="lock-vloer-group-l" opacity="0"><rect id="lock-vl" x="180" y="420" width="30" height="15" fill="#ef4444" rx="2"/><circle id="lock-vlc" cx="195" cy="427" r="3" fill="white"/></g>
                     <text id="txt-lock-offset-l" x="180" y="415" font-size="9" font-weight="bold" fill="#ef4444" opacity="0" text-anchor="middle">Offset: --</text>
                     <circle id="handle-l" cy="270" r="6" fill="#0284c7" opacity="0"/>
                 </g>
@@ -364,30 +357,15 @@
                 <g id="svg-group-spr">
                     <rect id="rect-spr-2" x="0" y="105" width="0" height="340" fill="#bae6fd" opacity="0.6" stroke="#0369a1" stroke-width="1.5" style="display:none;"/>
                     <rect id="rect-spr" x="0" y="95" width="0" height="350" fill="#bae6fd" opacity="0.9" stroke="#0284c7" stroke-width="2"/>
-                    
-                    <g id="hinge-group-left-r" opacity="0">
-                        <rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/>
-                        <rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/>
-                    </g>
-                    <g id="hinge-group-right-r" opacity="0">
-                        <rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/>
-                        <rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/>
-                    </g>
-                    
+                    <g id="hinge-group-left-r" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+                    <g id="hinge-group-right-r" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
                     <text id="text-spr" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">SP R</text>
                     <text id="svg-val-spr-dim" y="255" text-anchor="middle" font-size="10" fill="#0369a1">-- x --</text>
-                    
-                    <!-- Green Sliding Direction Arrow -->
                     <line id="arrow-dir-spr" stroke="#10b981" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-green)" opacity="0"/>
-
                     <g id="rail-u-r" opacity="0"><rect x="450" y="430" width="100" height="12" fill="#f59e0b" rx="2"/><text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">U-Rail</text></g>
                     <g id="rail-l-r" opacity="0"><rect x="450" y="430" width="100" height="12" fill="#10b981" rx="2"/><text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">L-Rail</text></g>
                     <g id="rail-omega-r" opacity="0"><rect x="450" y="430" width="100" height="12" fill="#6366f1" rx="2"/><text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Omega-rail</text></g>
-
-                    <g class="lock-vloer" id="lock-vloer-group-r" opacity="0">
-                        <rect id="lock-vr" x="390" y="420" width="30" height="15" fill="#ef4444" rx="2"/>
-                        <circle id="lock-vrc" cx="405" cy="427" r="3" fill="white"/>
-                    </g>
+                    <g class="lock-vloer" id="lock-vloer-group-r" opacity="0"><rect id="lock-vr" x="390" y="420" width="30" height="15" fill="#ef4444" rx="2"/><circle id="lock-vrc" cx="405" cy="427" r="3" fill="white"/></g>
                     <text id="txt-lock-offset-r" x="405" y="415" font-size="9" font-weight="bold" fill="#ef4444" opacity="0" text-anchor="middle">Offset: --</text>
                     <circle id="handle-r" cy="270" r="6" fill="#0284c7" opacity="0"/>
                 </g>
@@ -398,13 +376,12 @@
                     <text id="svg-val-vpr-dim" y="255" text-anchor="middle" font-size="10" fill="#0284c7">-- x --</text>
                 </g>
 
-                <!-- TV 100/200 Slot op Deurpaneel -->
                 <g id="lock-tv" opacity="0">
                     <rect id="rect-tv-lock" x="0" y="0" width="30" height="12" fill="#8b5cf6" rx="2" />
                     <text id="text-tv-lock" x="15" y="9" text-anchor="middle" font-size="8" font-weight="bold" fill="white">TV</text>
                 </g>
 
-                <!-- LB Dimension (Loopbreedte) -->
+                <!-- LB Dimension -->
                 <line id="line-lb" x1="230" y1="465" x2="370" y2="465" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
                 <rect id="rect-lb" x="250" y="455" width="100" height="20" fill="white" opacity="0.9"/>
                 <text id="svg-val-lb" x="300" y="470" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF">LB: -- mm</text>
@@ -415,7 +392,6 @@
                     <rect x="350" y="10" width="190" height="25" fill="white" stroke="#007AFF" stroke-width="1" rx="4" opacity="0.95"/>
                     <text id="txt-swing-asm" x="355" y="26" font-size="9" font-weight="bold" fill="#007AFF">Asm: -- | Muur: --</text>
                 </g>
-
                 <g id="callout-spl" opacity="0">
                     <path id="callout-spl-line" d="M 75 180 L 150 200" stroke="#0369a1" stroke-width="1.5" stroke-dasharray="3,3"/>
                     <rect x="10" y="115" width="130" height="60" fill="white" stroke="#0369a1" stroke-width="1" rx="4" opacity="0.95"/>
@@ -424,7 +400,6 @@
                     <text id="txt-spl-prof" x="15" y="155" font-size="8" fill="#333">Prof (B/O/Z): --/--/--</text>
                     <text id="txt-spl-lat" x="15" y="167" font-size="8" fill="#333">Glaslat: --</text>
                 </g>
-
                 <g id="callout-spr" opacity="0">
                     <path id="callout-spr-line" d="M 525 180 L 450 200" stroke="#0369a1" stroke-width="1.5" stroke-dasharray="3,3"/>
                     <rect x="460" y="115" width="130" height="60" fill="white" stroke="#0369a1" stroke-width="1" rx="4" opacity="0.95"/>
@@ -436,53 +411,54 @@
             </svg>
         </div>
 
-        <div class="ios-header">Wat wordt vervangen?</div>
+        <div class="ios-header" data-i18n="hdr_vervangen">Wat wordt vervangen?</div>
         <div class="ios-group p-2">
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Aandrijfsysteem</div>
+                <div class="ios-label !w-auto" data-i18n="opt_aandrijving">Aandrijfsysteem</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100 pl-8 bg-gray-50/50">
-                <div class="ios-label !w-auto text-sm text-gray-500">└ Zonder Kap</div>
+                <div class="ios-label !w-auto text-sm text-gray-500" data-i18n="opt_zonder_kap">└ Zonder Kap</div>
                 <input type="checkbox" class="accent-[#007AFF] w-4 h-4">
             </label>
             
             <div class="ios-row col-layout border-b border-gray-100 py-2">
-                <div class="ios-label !w-full text-sm text-gray-500 mb-1">Oud Systeem (Bestaand)</div>
-                <input type="text" class="ios-input !text-left w-full bg-gray-50 rounded p-2 text-sm" placeholder="bv. Oude Besam / Dorma ...">
+                <div class="ios-label !w-full text-sm text-gray-500 mb-1" data-i18n="lbl_oud_systeem">Oud Systeem (Bestaand)</div>
+                <input type="text" class="ios-input !text-left w-full bg-gray-50 rounded p-2 text-sm" data-i18n-placeholder="ph_oud_systeem" placeholder="bv. Oude Besam / Dorma ...">
             </div>
 
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Linker vleugel</div>
+                <div class="ios-label !w-auto" data-i18n="opt_vleugel_l">Linker vleugel</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Rechter vleugel</div>
+                <div class="ios-label !w-auto" data-i18n="opt_vleugel_r">Rechter vleugel</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Beide vleugels</div>
+                <div class="ios-label !w-auto" data-i18n="opt_beide_vleugels">Beide vleugels</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Vast paneel links</div>
+                <div class="ios-label !w-auto" data-i18n="opt_vast_l">Vast paneel links</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
-                <div class="ios-label !w-auto">Vast paneel rechts</div>
+                <div class="ios-label !w-auto" data-i18n="opt_vast_r">Vast paneel rechts</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
             <label class="ios-row cursor-pointer hover:bg-gray-50 border-b-0">
-                <div class="ios-label !w-auto">Beide vaste panelen</div>
+                <div class="ios-label !w-auto" data-i18n="opt_beide_vast">Beide vaste panelen</div>
                 <input type="checkbox" class="accent-[#007AFF] w-5 h-5">
             </label>
         </div>
 
-        <div class="ios-header">Systeem Configuratie</div>
+        <div class="ios-header" data-i18n="hdr_config">Systeem Configuratie</div>
         <div class="ios-group">
             <div class="ios-row">
-                <div class="ios-label">Deurtype</div>
+                <div class="ios-label" data-i18n="lbl_deurtype">Deurtype</div>
                 <select id="deurtype" class="ios-select">
+                    <!-- Data value remains Dutch for logic, UI text translates via JS option mapping -->
                     <option value="Schuifdeur">Schuifdeur</option>
                     <option value="Draaideur">Draaideur</option>
                 </select>
@@ -490,29 +466,29 @@
             
             <div id="draaideur-extra-group" class="hidden">
                 <div class="ios-row bg-gray-50">
-                    <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Draaideur Uitrusting & Arm</div>
+                    <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_draaideur_uitrusting">Draaideur Uitrusting & Arm</div>
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Armsoort</div>
+                    <div class="ios-label" data-i18n="lbl_armsoort">Armsoort</div>
                     <select id="draaideur-arm" class="ios-select font-semibold">
-                        <option>Glijarm (Push / Pull)</option>
-                        <option>Schaararm (Push / Pull)</option>
+                        <option value="Glijarm">Glijarm (Push / Pull)</option>
+                        <option value="Schaararm">Schaararm (Push / Pull)</option>
                     </select>
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Asmaat / Diepte</div>
+                    <div class="ios-label" data-i18n="lbl_asmaat">Asmaat / Diepte</div>
                     <input type="number" id="dim-draai-asm" class="ios-input" placeholder="mm">
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label" style="font-size: 15px;">Diepte tussen muur en deurvlak</div>
+                    <div class="ios-label" style="font-size: 15px;" data-i18n="lbl_muur_deur_diepte">Diepte tussen muur en deurvlak</div>
                     <input type="number" id="dim-muur-deur-diepte" class="ios-input" placeholder="mm (+ of -)">
                 </div>
             </div>
 
             <div class="ios-row" id="row-profielsysteem">
-                <div class="ios-label">Profielsysteem</div>
+                <div class="ios-label" data-i18n="lbl_profiel">Profielsysteem</div>
                 <select id="profielsysteem" class="ios-select">
-                    <option value="" disabled selected>Kies profiel/type...</option>
+                    <option value="" disabled selected data-i18n="opt_kies_profiel">Kies profiel/type...</option>
                     <option>ST (Standaard)</option>
                     <option>FLEX</option>
                     <option>FLEX Green</option>
@@ -520,13 +496,13 @@
                     <option>Antipaniek</option>
                     <option>FST</option>
                     <option>Volledig Glas</option>
-                    <option>Ander / Zonder</option>
+                    <option data-i18n="opt_ander">Ander / Zonder</option>
                 </select>
             </div>
             <div class="ios-row">
-                <div class="ios-label">Nieuwe Aandrijving</div>
+                <div class="ios-label" data-i18n="lbl_aandrijving">Nieuwe Aandrijving</div>
                 <select id="aandrijving-select" class="ios-select font-semibold">
-                    <option value="" disabled selected>Kies model...</option>
+                    <option value="" disabled selected data-i18n="opt_kies_model">Kies model...</option>
                     <optgroup label="Schuifdeuren - ES PROLINE">
                         <option>ES PROLINE 250/130</option>
                         <option>ES PROLINE 250/180</option>
@@ -537,7 +513,7 @@
                 </select>
             </div>
             <div class="ios-row">
-                <div class="ios-label">Openingswijze</div>
+                <div class="ios-label" data-i18n="lbl_openingswijze">Openingswijze</div>
                 <select id="openingswijze" class="ios-select">
                     <option value="Dubbel (Centraal)">Dubbel (Centraal)</option>
                     <option value="Linksopenend (OG)">Linksopenend (OG)</option>
@@ -545,58 +521,54 @@
                 </select>
             </div>
 
-            <!-- Sliding Door Suspension (Exclusively for Sliding Doors) -->
             <div class="ios-row" id="koordophanging-row">
-                <div class="ios-label">Koordophanging systeem</div>
+                <div class="ios-label" data-i18n="lbl_koord">Koordophanging systeem</div>
                 <select id="koordophanging" class="ios-select">
-                    <option>Nee</option>
-                    <option>Ja</option>
+                    <option data-i18n="opt_nee">Nee</option>
+                    <option data-i18n="opt_ja">Ja</option>
                 </select>
             </div>
 
             <div class="ios-row">
-                <div class="ios-label">RAL Kleur / Finish</div>
+                <div class="ios-label" data-i18n="lbl_ral">RAL Kleur / Finish</div>
                 <div class="w-full flex flex-col items-end">
-                    <input type="text" id="ral-kleur" class="ios-input mb-2" placeholder="bv. RAL 7016 of Anodisé">
-                    <div class="flex flex-wrap gap-2 justify-end mt-1 w-full" id="ral-palette">
-                        <!-- Dynamic Swatches -->
-                    </div>
+                    <input type="text" id="ral-kleur" class="ios-input mb-2" data-i18n-placeholder="ph_ral" placeholder="bv. RAL 7016 of Anodisé">
+                    <div class="flex flex-wrap gap-2 justify-end mt-1 w-full" id="ral-palette"></div>
                 </div>
             </div>
         </div>
 
-        <div class="ios-header">Globale Afmetingen (mm)</div>
+        <div class="ios-header" data-i18n="hdr_globale_afm">Globale Afmetingen (mm)</div>
         <div class="ios-group">
             <div class="ios-row">
-                <div class="ios-label">Totaal Breedte (TB)</div>
+                <div class="ios-label" data-i18n="lbl_tb">Totaal Breedte (TB)</div>
                 <input type="number" id="dim-tb" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Totaal Hoogte (TH)</div>
+                <div class="ios-label" data-i18n="lbl_th">Totaal Hoogte (TH)</div>
                 <input type="number" id="dim-th" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Loopbreedte (LB)</div>
+                <div class="ios-label" data-i18n="lbl_lb">Loopbreedte (LB)</div>
                 <input type="number" id="dim-lb" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Loophoogte (LH)</div>
+                <div class="ios-label" data-i18n="lbl_lh">Loophoogte (LH)</div>
                 <input type="number" id="dim-lh" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Kap Hoogte</div>
+                <div class="ios-label" data-i18n="lbl_kap_h">Kap Hoogte</div>
                 <input type="number" id="dim-kap-h" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Kap Diepte</div>
+                <div class="ios-label" data-i18n="lbl_kap_d">Kap Diepte</div>
                 <input type="number" id="dim-kap-d" inputmode="decimal" class="ios-input" placeholder="mm">
             </div>
         </div>
 
-        <div id="lbl-panel-header" class="ios-header">Schuifpaneel & Vaste Panelen</div>
+        <div id="lbl-panel-header" class="ios-header" data-i18n="hdr_panelen">Schuifpaneel & Vaste Panelen</div>
         
         <div class="ios-group">
-            <!-- Schuifpaneel Links (SP L) / Deur L -->
             <div class="ios-row bg-gray-50">
                 <div id="lbl-panel-title-sl" class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Schuifpaneel Links (SP L)</div>
             </div>
@@ -610,28 +582,27 @@
             </div>
             <div id="sliding-panel-extra-group" class="w-full">
                 <div class="ios-row">
-                    <div class="ios-label">Glaslatten Dikte</div>
+                    <div class="ios-label" data-i18n="lbl_glaslat">Glaslatten Dikte</div>
                     <input type="number" id="dim-glaslat-d" class="ios-input" placeholder="mm">
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Glasmaat (tot glaslatten)</div>
+                    <div class="ios-label" data-i18n="lbl_glasmaat">Glasmaat (tot glaslatten)</div>
                     <input type="text" id="dim-glasmaat" class="ios-input" placeholder="B x H mm">
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Profieldikte Boven</div>
+                    <div class="ios-label" data-i18n="lbl_prof_boven">Profieldikte Boven</div>
                     <input type="number" id="dim-prof-boven" class="ios-input" placeholder="mm">
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Profieldikte Onder</div>
+                    <div class="ios-label" data-i18n="lbl_prof_onder">Profieldikte Onder</div>
                     <input type="number" id="dim-prof-onder" class="ios-input" placeholder="mm">
                 </div>
                 <div class="ios-row">
-                    <div class="ios-label">Profieldikte Zijkanten</div>
+                    <div class="ios-label" data-i18n="lbl_prof_zij">Profieldikte Zijkanten</div>
                     <input type="number" id="dim-prof-zijkant" class="ios-input" placeholder="mm">
                 </div>
             </div>
 
-            <!-- Schuifpaneel Rechts (SP R) / Deur R - Only for non-double or swing doors -->
             <div id="spr-dimension-group">
                 <div class="ios-row bg-gray-50">
                     <div id="lbl-panel-title-r" class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Schuifpaneel Rechts (SP R)</div>
@@ -646,102 +617,101 @@
                 </div>
                 <div id="sliding-panel-extra-r-group" class="w-full">
                     <div class="ios-row">
-                        <div class="ios-label">Glaslatten Dikte (R)</div>
+                        <div class="ios-label" data-i18n="lbl_glaslat_r">Glaslatten Dikte (R)</div>
                         <input type="number" id="dim-glaslat-d-r" class="ios-input" placeholder="mm">
                     </div>
                     <div class="ios-row">
-                        <div class="ios-label">Glasmaat (R)</div>
+                        <div class="ios-label" data-i18n="lbl_glasmaat_r">Glasmaat (R)</div>
                         <input type="text" id="dim-glasmaat-r" class="ios-input" placeholder="B x H mm">
                     </div>
                 </div>
             </div>
 
-            <!-- Vaste Panelen (VP L & VP R) - Only Width and Height -->
             <div class="ios-row bg-gray-50">
-                <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Vast Paneel Links (VP L)</div>
+                <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_vp_l">Vast Paneel Links (VP L)</div>
             </div>
             <div class="ios-row">
-                <div class="ios-label">Breedte (VP L)</div>
+                <div class="ios-label" data-i18n="lbl_b_vpl">Breedte (VP L)</div>
                 <input type="number" id="dim-vpl-b" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Hoogte (VP L)</div>
+                <div class="ios-label" data-i18n="lbl_h_vpl">Hoogte (VP L)</div>
                 <input type="number" id="dim-vpl-h" class="ios-input" placeholder="mm">
             </div>
 
             <div class="ios-row bg-gray-50">
-                <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Vast Paneel Rechts (VP R)</div>
+                <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_vp_r">Vast Paneel Rechts (VP R)</div>
             </div>
             <div class="ios-row">
-                <div class="ios-label">Breedte (VP R)</div>
+                <div class="ios-label" data-i18n="lbl_b_vpr">Breedte (VP R)</div>
                 <input type="number" id="dim-vpr-b" class="ios-input" placeholder="mm">
             </div>
             <div class="ios-row">
-                <div class="ios-label">Hoogte (VP R)</div>
+                <div class="ios-label" data-i18n="lbl_h_vpr">Hoogte (VP R)</div>
                 <input type="number" id="dim-vpr-h" class="ios-input" placeholder="mm">
             </div>
         </div>
 
-        <div class="ios-header">Onderdelen & Opties</div>
+        <div class="ios-header" data-i18n="hdr_opties">Onderdelen & Opties</div>
         <div class="ios-group">
             <div class="ios-row">
-                <div class="ios-label">Vloergeleider Type</div>
+                <div class="ios-label" data-i18n="lbl_vloergeleider">Vloergeleider Type</div>
                 <select id="vloergeleider" class="ios-select">
-                    <option>Zonder</option>
-                    <option>U-Model</option>
-                    <option>L-Model</option>
-                    <option>Omega-rail</option>
-                    <option>Antipaniek</option>
+                    <option value="Zonder" data-i18n="opt_zonder">Zonder</option>
+                    <option value="U-Model">U-Model</option>
+                    <option value="L-Model">L-Model</option>
+                    <option value="Omega-rail">Omega-rail</option>
+                    <option value="Antipaniek">Antipaniek</option>
                 </select>
             </div>
             <div class="ios-row">
-                <div class="ios-label">Slotmechanisme</div>
+                <div class="ios-label" data-i18n="lbl_slot">Slotmechanisme</div>
                 <select id="slotmechanisme" class="ios-select">
-                    <option value="geen">Geen slot</option>
+                    <option value="geen" data-i18n="opt_geen_slot">Geen slot</option>
                     <option value="em-fiac">Electromechanisch: FIAC</option>
                     <option value="em-mono">Electromechanisch: Mono-stabiel</option>
                     <option value="em-bi">Electromechanisch: Bi-stabiel</option>
                     <option value="tv100-200">Electromechanisch: TV 100 / TV 200 (Pin/Kleefslot)</option>
-                    <option value="vloer-sluitkant">Vloerslot: Aan Sluitkant</option>
-                    <option value="vloer-centraal">Vloerslot: Centraal (Midden)</option>
-                    <option value="haak-profiel">Haakslot (Profiel)</option>
+                    <option value="vloer-sluitkant" data-i18n="opt_vloer_sluit">Vloerslot: Aan Sluitkant</option>
+                    <option value="vloer-centraal" data-i18n="opt_vloer_centraal">Vloerslot: Centraal (Midden)</option>
+                    <option value="haak-profiel" data-i18n="opt_haakslot">Haakslot (Profiel)</option>
                 </select>
             </div>
             <div id="vloerslot-positie-group" class="ios-row col-layout hidden">
-                <div class="ios-label mb-1">Positie & Uitvoering Vloerslot</div>
+                <div class="ios-label mb-1" data-i18n="lbl_pos_vloerslot">Positie & Uitvoering Vloerslot</div>
                 <div class="w-full flex flex-col gap-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Type uitvoering:</span>
+                        <span class="text-sm text-gray-600" data-i18n="lbl_type_uitv">Type uitvoering:</span>
                         <select id="vloerslot-type" class="ios-select !w-32 bg-gray-50 rounded p-1">
-                            <option>Half</option>
-                            <option>Doorlopend</option>
+                            <option data-i18n="opt_half">Half</option>
+                            <option data-i18n="opt_doorlopend">Doorlopend</option>
                         </select>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Offset vanaf sluitkant (mm):</span>
+                        <span class="text-sm text-gray-600" data-i18n="lbl_offset">Offset vanaf sluitkant (mm):</span>
                         <input type="number" id="dim-vloerslot-pos" class="ios-input !w-24 bg-gray-50 rounded p-1 text-right" placeholder="mm">
                     </div>
                     <label class="flex items-center gap-2 text-sm mt-1 cursor-pointer">
-                        <input type="checkbox" id="vloerboring-nodig" class="accent-[#007AFF] w-4 h-4"> Vloerboring uit te voeren
+                        <input type="checkbox" id="vloerboring-nodig" class="accent-[#007AFF] w-4 h-4"> <span data-i18n="lbl_boring">Vloerboring uit te voeren</span>
                     </label>
                 </div>
             </div>
         </div>
 
-        <div class="ios-header">Technieker & Extra</div>
+        <div class="ios-header" data-i18n="hdr_tech">Technieker & Extra</div>
         <div class="ios-group">
             <div class="ios-row">
-                <div class="ios-label">Naam Technieker</div>
-                <input type="text" class="ios-input" placeholder="Jouw naam">
+                <div class="ios-label" data-i18n="lbl_tech_naam">Naam Technieker</div>
+                <input type="text" class="ios-input" data-i18n-placeholder="ph_tech_naam" placeholder="Jouw naam">
             </div>
             <div class="ios-row col-layout">
-                <div class="ios-label">Opmerkingen</div>
-                <textarea class="ios-input w-full mt-1 resize-none" rows="4" placeholder="Eventuele opmerkingen of speciale vereisten..."></textarea>
+                <div class="ios-label" data-i18n="lbl_opm">Opmerkingen</div>
+                <textarea class="ios-input w-full mt-1 resize-none" rows="4" data-i18n-placeholder="ph_opm" placeholder="Eventuele opmerkingen of speciale vereisten..."></textarea>
             </div>
         </div>
         
         <div class="px-4 mt-8 mb-12 no-print">
-            <button type="button" onclick="window.print()" class="w-full bg-[#007AFF] text-white font-semibold text-lg py-3 rounded-xl shadow-sm hover:bg-blue-600 transition-colors">
+            <button type="button" onclick="window.print()" class="w-full bg-[#007AFF] text-white font-semibold text-lg py-3 rounded-xl shadow-sm hover:bg-blue-600 transition-colors" data-i18n="btn_gen_pdf">
                 Genereer PDF / Print
             </button>
         </div>
@@ -749,15 +719,119 @@
     </form>
 
     <script>
+        // --- TRANSLATION DICTIONARY ---
+        const translations = {
+            nl: {
+                nav_clear: "Wis Alles", nav_print: "Print PDF", print_title: "Dormakaba Opmetingsblad", print_subtitle: "Vervanging / Nieuwe Installatie",
+                hdr_dossier: "Dossier & Klant", lbl_werf: "Werf / Chantier", ph_werf: "Naam werf", lbl_datum: "Datum opm.", lbl_dossier: "Dossiernr.", ph_dossier: "bv. 12345",
+                lbl_contact: "Contactpersoon", ph_naam: "Naam", lbl_telefoon: "Telefoon", lbl_locatie: "Locatie", ph_locatie: "Straat + Gem.", lbl_deurlocatie: "Deurlocatie (Gebouw)", ph_deurlocatie: "bv. Hoofdingang, Gang 2",
+                hdr_schets: "Schets / Technische Visualisation (Live)", btn_reset: "↺ Reset Velden",
+                hdr_vervangen: "Wat wordt vervangen?", opt_aandrijving: "Aandrijfsysteem", opt_zonder_kap: "└ Zonder Kap", lbl_oud_systeem: "Oud Systeem (Bestaand)", ph_oud_systeem: "bv. Oude Besam / Dorma ...",
+                opt_vleugel_l: "Linker vleugel", opt_vleugel_r: "Rechter vleugel", opt_beide_vleugels: "Beide vleugels", opt_vast_l: "Vast paneel links", opt_vast_r: "Vast paneel rechts", opt_beide_vast: "Beide vaste panelen",
+                hdr_config: "Systeem Configuratie", lbl_deurtype: "Deurtype",
+                lbl_draaideur_uitrusting: "Draaideur Uitrusting & Arm", lbl_armsoort: "Armsoort", lbl_asmaat: "Asmaat / Diepte", lbl_muur_deur_diepte: "Diepte tussen muur en deurvlak",
+                lbl_profiel: "Profielsysteem", opt_kies_profiel: "Kies profiel/type...", opt_ander: "Ander / Zonder", lbl_aandrijving: "Nieuwe Aandrijving", opt_kies_model: "Kies model...",
+                lbl_openingswijze: "Openingswijze", lbl_koord: "Koordophanging systeem", opt_nee: "Nee", opt_ja: "Ja", lbl_ral: "RAL Kleur / Finish", ph_ral: "bv. RAL 7016 of Anodisé",
+                hdr_globale_afm: "Globale Afmetingen (mm)", lbl_tb: "Totaal Breedte (TB)", lbl_th: "Totaal Hoogte (TH)", lbl_lb: "Loopbreedte (LB)", lbl_lh: "Loophoogte (LH)", lbl_kap_h: "Kap Hoogte", lbl_kap_d: "Kap Diepte",
+                hdr_panelen: "Schuifpaneel & Vaste Panelen", lbl_glaslat: "Glaslatten Dikte", lbl_glasmaat: "Glasmaat (tot glaslatten)", lbl_prof_boven: "Profieldikte Boven", lbl_prof_onder: "Profieldikte Onder", lbl_prof_zij: "Profieldikte Zijkanten",
+                lbl_glaslat_r: "Glaslatten Dikte (R)", lbl_glasmaat_r: "Glasmaat (R)", lbl_vp_l: "Vast Paneel Links (VP L)", lbl_b_vpl: "Breedte (VP L)", lbl_h_vpl: "Hoogte (VP L)",
+                lbl_vp_r: "Vast Paneel Rechts (VP R)", lbl_b_vpr: "Breedte (VP R)", lbl_h_vpr: "Hoogte (VP R)",
+                hdr_opties: "Onderdelen & Opties", lbl_vloergeleider: "Vloergeleider Type", opt_zonder: "Zonder", lbl_slot: "Slotmechanisme", opt_geen_slot: "Geen slot", opt_vloer_sluit: "Vloerslot: Aan Sluitkant", opt_vloer_centraal: "Vloerslot: Centraal (Midden)", opt_haakslot: "Haakslot (Profiel)",
+                lbl_pos_vloerslot: "Positie & Uitvoering Vloerslot", lbl_type_uitv: "Type uitvoering:", opt_half: "Half", opt_doorlopend: "Doorlopend", lbl_offset: "Offset vanaf sluitkant (mm):", lbl_boring: "Vloerboring uit te voeren",
+                hdr_tech: "Technieker & Extra", lbl_tech_naam: "Naam Technieker", ph_tech_naam: "Jouw naam", lbl_opm: "Opmerkingen", ph_opm: "Eventuele opmerkingen of speciale vereisten...", btn_gen_pdf: "Genereer PDF / Print"
+            },
+            fr: {
+                nav_clear: "Tout Effacer", nav_print: "Imprimer PDF", print_title: "Fiche de Mesure Dormakaba", print_subtitle: "Remplacement / Nouvelle Installation",
+                hdr_dossier: "Dossier & Client", lbl_werf: "Chantier", ph_werf: "Nom du chantier", lbl_datum: "Date de mesur.", lbl_dossier: "N° Dossier", ph_dossier: "ex. 12345",
+                lbl_contact: "Personne de contact", ph_naam: "Nom", lbl_telefoon: "Téléphone", lbl_locatie: "Emplacement", ph_locatie: "Rue + Commune", lbl_deurlocatie: "Emplacement porte", ph_deurlocatie: "ex. Entrée principale",
+                hdr_schets: "Croquis / Visuel Technique (Live)", btn_reset: "↺ Réinitialiser",
+                hdr_vervangen: "Qu'est-ce qui est remplacé ?", opt_aandrijving: "Système d'entraînement", opt_zonder_kap: "└ Sans capot", lbl_oud_systeem: "Ancien système (Existant)", ph_oud_systeem: "ex. Ancien Besam / Dorma ...",
+                opt_vleugel_l: "Vantail gauche", opt_vleugel_r: "Vantail droit", opt_beide_vleugels: "Deux vantaux", opt_vast_l: "Panneau fixe gauche", opt_vast_r: "Panneau fixe droit", opt_beide_vast: "Deux panneaux fixes",
+                hdr_config: "Configuration du Système", lbl_deurtype: "Type de porte",
+                lbl_draaideur_uitrusting: "Équipement & Bras Porte Battante", lbl_armsoort: "Type de bras", lbl_asmaat: "Mesure d'axe / Profondeur", lbl_muur_deur_diepte: "Profondeur entre mur et porte",
+                lbl_profiel: "Système de profilés", opt_kies_profiel: "Choisir profil...", opt_ander: "Autre / Sans", lbl_aandrijving: "Nouvel Opérateur", opt_kies_model: "Choisir modèle...",
+                lbl_openingswijze: "Sens d'ouverture", lbl_koord: "Système de suspension à corde", opt_nee: "Non", opt_ja: "Oui", lbl_ral: "Couleur RAL / Finition", ph_ral: "ex. RAL 7016 ou Anodisé",
+                hdr_globale_afm: "Dimensions Globales (mm)", lbl_tb: "Largeur Totale (LT)", lbl_th: "Hauteur Totale (HT)", lbl_lb: "Largeur de passage (LP)", lbl_lh: "Hauteur de passage (HP)", lbl_kap_h: "Hauteur capot", lbl_kap_d: "Profondeur capot",
+                hdr_panelen: "Panneau Coulissant & Panneaux Fixes", lbl_glaslat: "Épaisseur parcloses", lbl_glasmaat: "Mesure de verre (jusqu'aux parcloses)", lbl_prof_boven: "Épaisseur profilé Haut", lbl_prof_onder: "Épaisseur profilé Bas", lbl_prof_zij: "Épaisseur profilé Latéraux",
+                lbl_glaslat_r: "Épaisseur parcloses (D)", lbl_glasmaat_r: "Mesure de verre (D)", lbl_vp_l: "Panneau Fixe Gauche (PF G)", lbl_b_vpl: "Largeur (PF G)", lbl_h_vpl: "Hauteur (PF G)",
+                lbl_vp_r: "Panneau Fixe Droit (PF D)", lbl_b_vpr: "Largeur (PF D)", lbl_h_vpr: "Hauteur (PF D)",
+                hdr_opties: "Composants & Options", lbl_vloergeleider: "Type guide au sol", opt_zonder: "Sans", lbl_slot: "Mécanisme de verrouillage", opt_geen_slot: "Pas de serrure", opt_vloer_sluit: "Verrou au sol: Côté Fermeture", opt_vloer_centraal: "Verrou au sol: Central (Milieu)", opt_haakslot: "Serrure à crochet (Profilé)",
+                lbl_pos_vloerslot: "Position & Exécution verrou au sol", lbl_type_uitv: "Type d'exécution:", opt_half: "Demi", opt_doorlopend: "Continu", lbl_offset: "Décalage côté fermeture (mm):", lbl_boring: "Forage au sol à effectuer",
+                hdr_tech: "Technicien & Extra", lbl_tech_naam: "Nom du technicien", ph_tech_naam: "Votre nom", lbl_opm: "Remarques", ph_opm: "Remarques éventuelles ou exigences spéciales...", btn_gen_pdf: "Générer PDF / Imprimer"
+            }
+        };
+
+        let currentLang = 'nl';
+
+        function toggleLanguage() {
+            const isFr = document.getElementById('lang-toggle').checked;
+            currentLang = isFr ? 'fr' : 'nl';
+            
+            // Update UI toggle colors
+            document.getElementById('lang-lbl-nl').classList.toggle('text-[#007AFF]', !isFr);
+            document.getElementById('lang-lbl-nl').classList.toggle('text-gray-400', isFr);
+            document.getElementById('lang-lbl-fr').classList.toggle('text-[#007AFF]', isFr);
+            document.getElementById('lang-lbl-fr').classList.toggle('text-gray-400', !isFr);
+
+            applyTranslations();
+            updateSelectOptions();
+            updateVisual(); // Refresh dynamic labels in SVG
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
+            });
+        }
+
+        function updateSelectOptions() {
+            // Update Dynamic Option Texts for Door Type
+            const deurtype = document.getElementById('deurtype');
+            deurtype.options[0].text = currentLang === 'nl' ? "Schuifdeur" : "Porte coulissante";
+            deurtype.options[1].text = currentLang === 'nl' ? "Draaideur" : "Porte battante";
+
+            // Update Dynamic Option Texts for Opening Types
+            const openingSelect = document.getElementById('openingswijze');
+            if (deurtype.value === 'Draaideur') {
+                openingSelect.innerHTML = `
+                    <option value="Dubbel Binnendraaiend">${currentLang === 'nl' ? 'Dubbel Binnendraaiend' : 'Double Ouvrant vers l\'intérieur'}</option>
+                    <option value="Dubbel Buitendraaiend">${currentLang === 'nl' ? 'Dubbel Buitendraaiend' : 'Double Ouvrant vers l\'extérieur'}</option>
+                    <option value="Enkel DIN Links Binnendraaiend">${currentLang === 'nl' ? 'Enkel DIN Links Binnendraaiend' : 'Simple DIN Gauche Intérieur'}</option>
+                    <option value="Enkel DIN Links Buitendraaiend">${currentLang === 'nl' ? 'Enkel DIN Links Buitendraaiend' : 'Simple DIN Gauche Extérieur'}</option>
+                    <option value="Enkel DIN Rechts Binnendraaiend">${currentLang === 'nl' ? 'Enkel DIN Rechts Binnendraaiend' : 'Simple DIN Droite Intérieur'}</option>
+                    <option value="Enkel DIN Rechts Buitendraaiend">${currentLang === 'nl' ? 'Enkel DIN Rechts Buitendraaiend' : 'Simple DIN Droite Extérieur'}</option>
+                `;
+            } else {
+                openingSelect.innerHTML = `
+                    <option value="Dubbel (Centraal)">${currentLang === 'nl' ? 'Dubbel (Centraal)' : 'Double (Central)'}</option>
+                    <option value="Linksopenend (OG)">${currentLang === 'nl' ? 'Linksopenend (OG)' : 'Ouverture Gauche (OG)'}</option>
+                    <option value="Rechtsopenend (OR)">${currentLang === 'nl' ? 'Rechtsopenend (OR)' : 'Ouverture Droite (OR)'}</option>
+                `;
+            }
+
+            const draaideurArm = document.getElementById('draaideur-arm');
+            if(draaideurArm) {
+                draaideurArm.options[0].text = currentLang === 'nl' ? "Glijarm (Push / Pull)" : "Bras à glissière (Push/Pull)";
+                draaideurArm.options[1].text = currentLang === 'nl' ? "Schaararm (Push / Pull)" : "Bras à compas (Push/Pull)";
+            }
+        }
+
+
+        // --- EXISTING APP LOGIC ---
         const ralDatabase = [
-            { ral: "RAL 1013", hex: "#E3D9C6", label: "Parelwit", keywords: "wit parelwit beige 1013" },
-            { ral: "RAL 3020", hex: "#CC0605", label: "Verkeersrood", keywords: "rood red brandweerrood 3020" },
-            { ral: "RAL 5010", hex: "#0E46A3", label: "Gentiaanblauw", keywords: "blauw blue gentiaanblauw 5010" },
-            { ral: "RAL 7016", hex: "#383E42", label: "Antracietgrijs", keywords: "antraciet grijs grey 7016" },
-            { ral: "RAL 9005", hex: "#1A1A1A", label: "Gitzwart", keywords: "zwart black 9005" },
-            { ral: "RAL 9006", hex: "#A5A8A6", label: "Blank aluminium", keywords: "zilver silver blank anodisé anodise ano natuur 9006" },
-            { ral: "RAL 9010", hex: "#FFFFFF", label: "Zuiver wit", keywords: "wit zuiverwit 9010" },
-            { ral: "RAL 9016", hex: "#F4F8F4", label: "Verkeerswit", keywords: "wit white verkeerswit 9016" }
+            { ral: "RAL 1013", hex: "#E3D9C6", label: "Parelwit", keywords: "wit parelwit beige blanc 1013" },
+            { ral: "RAL 3020", hex: "#CC0605", label: "Verkeersrood", keywords: "rood red rouge brandweerrood 3020" },
+            { ral: "RAL 5010", hex: "#0E46A3", label: "Gentiaanblauw", keywords: "blauw blue bleu gentiaanblauw 5010" },
+            { ral: "RAL 7016", hex: "#383E42", label: "Antracietgrijs", keywords: "antraciet grijs gris grey 7016" },
+            { ral: "RAL 9005", hex: "#1A1A1A", label: "Gitzwart", keywords: "zwart black noir 9005" },
+            { ral: "RAL 9006", hex: "#A5A8A6", label: "Blank aluminium", keywords: "zilver silver argent blank anodisé anodise ano natuur 9006" },
+            { ral: "RAL 9010", hex: "#FFFFFF", label: "Zuiver wit", keywords: "wit zuiverwit blanc 9010" },
+            { ral: "RAL 9016", hex: "#F4F8F4", label: "Verkeerswit", keywords: "wit white blanc verkeerswit 9016" }
         ];
 
         const defaultRals = ["RAL 9016", "RAL 9005", "RAL 7016", "RAL 9006", "RAL 3020", "RAL 5010"];
@@ -848,38 +922,30 @@
             const deurlocatie = document.getElementById('deurlocatie').value;
 
             const printLoc = document.getElementById('print-deurlocatie');
-            if(printLoc) printLoc.textContent = deurlocatie ? `- Locatie: ${deurlocatie}` : '';
+            if(printLoc) {
+                const locStr = currentLang === 'nl' ? 'Locatie' : 'Emplacement';
+                printLoc.textContent = deurlocatie ? `- ${locStr}: ${deurlocatie}` : '';
+            }
 
             const isSwing = deurtype === 'Draaideur';
             let isDubbel = false;
             let isL = false;
             let isR = false;
-            let isOutward = false;
 
             if (isSwing) {
-                if (opening.includes('Dubbel Buitendraaiend')) {
+                if (opening.includes('Dubbel')) {
                     isDubbel = true;
-                    isOutward = true;
-                } else if (opening.includes('Dubbel Binnendraaiend')) {
-                    isDubbel = true;
-                    isOutward = false;
-                } else if (opening.includes('Links') && opening.includes('Buitendraaiend')) {
+                } else if (opening.includes('Links')) {
                     isL = true;
-                    isOutward = true;
-                } else if (opening.includes('Links') && opening.includes('Binnendraaiend')) {
-                    isL = true;
-                    isOutward = false;
-                } else if (opening.includes('Rechts') && opening.includes('Buitendraaiend')) {
+                } else if (opening.includes('Rechts')) {
                     isR = true;
-                    isOutward = true;
                 } else {
                     isR = true;
-                    isOutward = false;
                 }
             } else {
-                isDubbel = opening.includes('Dubbel');
-                isL = opening.includes('Linksopenend');
-                isR = opening.includes('Rechtsopenend');
+                isDubbel = opening.includes('Dubbel') || opening.includes('Double');
+                isL = opening.includes('Links') || opening.includes('Gauche');
+                isR = opening.includes('Rechts') || opening.includes('Droite');
                 if(!isDubbel && !isL && !isR) isDubbel = true;
             }
 
@@ -894,7 +960,6 @@
                 if(rowProfielSysteem) rowProfielSysteem.classList.remove('hidden');
             }
 
-            // Sync SP R width and height with SP L if double central sliding door
             const splWidthInput = document.getElementById('dim-spl-b');
             const sprWidthInput = document.getElementById('dim-spr-b');
             const splHeightInput = document.getElementById('dim-spl-h');
@@ -919,33 +984,33 @@
             const sprDimGroup = document.getElementById('spr-dimension-group');
 
             if (isSwing) {
-                if(lblPanelHeader) lblPanelHeader.textContent = "Deurvleugels: Links & Rechts";
-                if(lblTitleL) lblTitleL.textContent = "Deur Links";
-                if(lblBL) lblBL.textContent = "Breedte (Deur L)";
-                if(lblHL) lblHL.textContent = "Hoogte (Deur L)";
-                if(lblTitleR) lblTitleR.textContent = "Deur Rechts";
-                if(lblBR) lblBR.textContent = "Breedte (Deur R)";
-                if(lblHR) lblHR.textContent = "Hoogte (Deur R)";
+                if(lblPanelHeader) lblPanelHeader.textContent = currentLang === 'nl' ? "Deurvleugels: Links & Rechts" : "Vantaux : Gauche & Droit";
+                if(lblTitleL) lblTitleL.textContent = currentLang === 'nl' ? "Deur Links" : "Porte Gauche";
+                if(lblBL) lblBL.textContent = currentLang === 'nl' ? "Breedte (Deur L)" : "Largeur (Porte G)";
+                if(lblHL) lblHL.textContent = currentLang === 'nl' ? "Hoogte (Deur L)" : "Hauteur (Porte G)";
+                if(lblTitleR) lblTitleR.textContent = currentLang === 'nl' ? "Deur Rechts" : "Porte Droite";
+                if(lblBR) lblBR.textContent = currentLang === 'nl' ? "Breedte (Deur R)" : "Largeur (Porte D)";
+                if(lblHR) lblHR.textContent = currentLang === 'nl' ? "Hoogte (Deur R)" : "Hauteur (Porte D)";
                 if(sprDimGroup) sprDimGroup.style.display = 'block';
             } else {
-                if(lblPanelHeader) lblPanelHeader.textContent = "Schuifpaneel & Vaste Panelen";
-                if(lblTitleL) lblTitleL.textContent = "Schuifpaneel Links (SP L)";
-                if(lblBL) lblBL.textContent = "Breedte (SP L)";
-                if(lblHL) lblHL.textContent = "Hoogte (SP L)";
-                if(lblTitleR) lblTitleR.textContent = "Schuifpaneel Rechts (SP R)";
-                if(lblBR) lblBR.textContent = "Breedte (SP R)";
-                if(lblHR) lblHR.textContent = "Hoogte (SP R)";
+                if(lblPanelHeader) lblPanelHeader.textContent = currentLang === 'nl' ? "Schuifpaneel & Vaste Panelen" : "Panneau Coulissant & Panneaux Fixes";
+                if(lblTitleL) lblTitleL.textContent = currentLang === 'nl' ? "Schuifpaneel Links (SP L)" : "Panneau Coulissant Gauche (PC G)";
+                if(lblBL) lblBL.textContent = currentLang === 'nl' ? "Breedte (SP L)" : "Largeur (PC G)";
+                if(lblHL) lblHL.textContent = currentLang === 'nl' ? "Hoogte (SP L)" : "Hauteur (PC G)";
+                if(lblTitleR) lblTitleR.textContent = currentLang === 'nl' ? "Schuifpaneel Rechts (SP R)" : "Panneau Coulissant Droit (PC D)";
+                if(lblBR) lblBR.textContent = currentLang === 'nl' ? "Breedte (SP R)" : "Largeur (PC D)";
+                if(lblHR) lblHR.textContent = currentLang === 'nl' ? "Hoogte (SP R)" : "Hauteur (PC D)";
                 if(sprDimGroup) sprDimGroup.style.display = isDubbel ? 'none' : 'block';
             }
 
-            document.getElementById('svg-val-tb').textContent = `TB: ${tb} mm`;
-            document.getElementById('svg-val-th').textContent = `TH: ${th} mm`;
-            document.getElementById('svg-val-lb').textContent = `LB: ${lb} mm`;
-            document.getElementById('svg-val-lh').textContent = `LH: ${lh} mm`;
-            document.getElementById('svg-val-kap').textContent = `Kap H: ${kaph} / D: ${kapd}`;
+            document.getElementById('svg-val-tb').textContent = (currentLang === 'nl' ? 'TB: ' : 'LT: ') + `${tb} mm`;
+            document.getElementById('svg-val-th').textContent = (currentLang === 'nl' ? 'TH: ' : 'HT: ') + `${th} mm`;
+            document.getElementById('svg-val-lb').textContent = (currentLang === 'nl' ? 'LB: ' : 'LP: ') + `${lb} mm`;
+            document.getElementById('svg-val-lh').textContent = (currentLang === 'nl' ? 'LH: ' : 'HP: ') + `${lh} mm`;
+            document.getElementById('svg-val-kap').textContent = (currentLang === 'nl' ? `Kap H: ${kaph} / D: ${kapd}` : `Capot H: ${kaph} / P: ${kapd}`);
             
             const ralTextEl = document.getElementById('svg-val-ral');
-            if (ralTextEl) ralTextEl.textContent = ralInput ? 'Kleur: ' + ralInput : '';
+            if (ralTextEl) ralTextEl.textContent = ralInput ? (currentLang === 'nl' ? 'Kleur: ' : 'Couleur: ') + ralInput : '';
 
             let kapColor = "#f3f4f6";
             let kapTextColor = "#333";
@@ -1022,7 +1087,6 @@
                 
                 group.style.opacity = visible ? '1' : '0';
 
-                // Scharnieren tonen op de juiste deuren
                 if (isSwing && visible) {
                     if (id === 'spl') {
                         if (isL || isDubbel) {
@@ -1084,7 +1148,7 @@
                     if(textLabel) textEl.textContent = textLabel;
                     if(dimEl) {
                         const hStr = heightVal ? `H: ${heightVal}mm` : '';
-                        const wStr = dimVal ? `B: ${dimVal}mm` : '';
+                        const wStr = dimVal ? (currentLang === 'nl' ? `B: ${dimVal}mm` : `L: ${dimVal}mm`) : '';
                         dimEl.textContent = (wStr || hStr) ? `${wStr} ${hStr}`.trim() : '-- x --';
                     }
 
@@ -1118,44 +1182,49 @@
             const sprB = document.getElementById('dim-spr-b').value || '';
             const sprH = document.getElementById('dim-spr-h').value || '';
 
-            // PANELEN TEKENEN VOORDAT ONDERDELEN WORDEN GEPLAATST
+            const t_vpl = currentLang === 'nl' ? 'VP L' : 'PF G';
+            const t_vpr = currentLang === 'nl' ? 'VP R' : 'PF D';
+            const t_spl = currentLang === 'nl' ? 'SP L' : 'PC G';
+            const t_spr = currentLang === 'nl' ? 'SP R' : 'PC D';
+            const t_deurl = currentLang === 'nl' ? 'Deur L' : 'Porte G';
+            const t_deurr = currentLang === 'nl' ? 'Deur R' : 'Porte D';
+
             if (isSwing) {
                 if (isDubbel) {
-                    updatePanel('vpl', 50, 90, true, 'VP L', vplB, vplH);
-                    updatePanel('spl', 140, 160, true, 'Deur L', splB, splH);
-                    updatePanel('spr', 300, 160, true, 'Deur R', sprB, sprH);
-                    updatePanel('vpr', 460, 90, true, 'VP R', vprB, vprH);
+                    updatePanel('vpl', 50, 90, true, t_vpl, vplB, vplH);
+                    updatePanel('spl', 140, 160, true, t_deurl, splB, splH);
+                    updatePanel('spr', 300, 160, true, t_deurr, sprB, sprH);
+                    updatePanel('vpr', 460, 90, true, t_vpr, vprB, vprH);
                 } else if (isL) {
-                    updatePanel('vpl', 50, 160, true, 'VP L', vplB, vplH);
-                    updatePanel('spl', 210, 290, true, 'Deur L', splB, splH);
+                    updatePanel('vpl', 50, 160, true, t_vpl, vplB, vplH);
+                    updatePanel('spl', 210, 290, true, t_deurl, splB, splH);
                     updatePanel('spr', 0, 0, false);
                     updatePanel('vpr', 0, 0, false);
                 } else {
                     updatePanel('vpl', 0, 0, false);
                     updatePanel('spl', 0, 0, false);
-                    updatePanel('spr', 100, 290, true, 'Deur R', sprB, sprH);
-                    updatePanel('vpr', 390, 160, true, 'VP R', vprB, vprH);
+                    updatePanel('spr', 100, 290, true, t_deurr, sprB, sprH);
+                    updatePanel('vpr', 390, 160, true, t_vpr, vprB, vprH);
                 }
             } else {
                 if (isDubbel) {
-                    updatePanel('vpl', 50, 100, true, 'VP L', vplB, vplH);
-                    updatePanel('spl', 150, 150, true, 'SP L', splB, splH);
-                    updatePanel('spr', 300, 150, true, 'SP R', sprB, sprH);
-                    updatePanel('vpr', 450, 100, true, 'VP R', vprB, vprH);
+                    updatePanel('vpl', 50, 100, true, t_vpl, vplB, vplH);
+                    updatePanel('spl', 150, 150, true, t_spl, splB, splH);
+                    updatePanel('spr', 300, 150, true, t_spr, sprB, sprH);
+                    updatePanel('vpr', 450, 100, true, t_vpr, vprB, vprH);
                 } else if (isL) {
-                    updatePanel('vpl', 50, 180, true, 'VP L', vplB, vplH);
-                    updatePanel('spl', 230, 270, true, 'SP L', splB, splH);
+                    updatePanel('vpl', 50, 180, true, t_vpl, vplB, vplH);
+                    updatePanel('spl', 230, 270, true, t_spl, splB, splH);
                     updatePanel('spr', 0, 0, false);
                     updatePanel('vpr', 0, 0, false);
                 } else {
                     updatePanel('vpl', 0, 0, false);
                     updatePanel('spl', 0, 0, false);
-                    updatePanel('spr', 100, 270, true, 'SP R', sprB, sprH);
-                    updatePanel('vpr', 370, 180, true, 'VP R', vprB, vprH);
+                    updatePanel('spr', 100, 270, true, t_spr, sprB, sprH);
+                    updatePanel('vpr', 370, 180, true, t_vpr, vprB, vprH);
                 }
             }
 
-            // Handles correct placement of Swing Operators and Handles
             const swingOpL = document.getElementById('svg-swing-op-l');
             const swingOpR = document.getElementById('svg-swing-op-r');
             const armGlijL = document.getElementById('arm-glij-l');
@@ -1171,11 +1240,11 @@
             if(armSchaarR) armSchaarR.style.opacity = '0';
 
             if (isSwing) {
-                const useGlij = armSoort.includes('Glijarm');
-                const useSchaar = armSoort.includes('Schaararm');
+                const useGlij = armSoort.includes('Glijarm') || armSoort.includes('glissière');
+                const useSchaar = armSoort.includes('Schaararm') || armSoort.includes('compas');
 
                 if (isL || isDubbel) {
-                    let opX = isL ? 210 : 140; // match spl x (starts at hinge)
+                    let opX = isL ? 210 : 140;
                     if(swingOpL) {
                         swingOpL.style.opacity = '1';
                         document.getElementById('ed-box-l').setAttribute('x', opX);
@@ -1204,15 +1273,13 @@
                         if (splRect) {
                             let rectX = parseInt(splRect.getAttribute('x')) || 0;
                             let rectW = parseInt(splRect.getAttribute('width')) || 0;
-                            if (rectW > 0) {
-                                handleL.setAttribute('cx', rectX + rectW - 15);
-                            }
+                            if (rectW > 0) handleL.setAttribute('cx', rectX + rectW - 15);
                         }
                     }
                 }
                 
                 if (isR || isDubbel) {
-                    let opXEnd = isR ? 390 : 460; // match spr x + w (hinge right)
+                    let opXEnd = isR ? 390 : 460;
                     let opX = opXEnd - 120;
                     if(swingOpR) {
                         swingOpR.style.opacity = '1';
@@ -1241,15 +1308,12 @@
                         const sprRect = document.getElementById('rect-spr');
                         if (sprRect) {
                             let rectX = parseInt(sprRect.getAttribute('x')) || 0;
-                            if (rectX > 0) {
-                                handleR.setAttribute('cx', rectX + 15);
-                            }
+                            if (rectX > 0) handleR.setAttribute('cx', rectX + 15);
                         }
                     }
                 }
             }
 
-            // TV 100/200 Slot positioning
             const lockTv = document.getElementById('lock-tv');
             const rectTv = document.getElementById('rect-tv-lock');
             const textTv = document.getElementById('text-tv-lock');
@@ -1258,9 +1322,8 @@
             
             if (slotType === 'tv100-200') {
                 let tvX = 0;
-                let tvY = 95; // Standaard bovenzijde van een paneel in SVG
+                let tvY = 95; 
                 if (isDubbel || isL) {
-                    // Bij dubbele of linkse deur: aan sluitkant van de linker deur
                     const splRect = document.getElementById('rect-spl');
                     if (splRect) {
                         let rX = parseInt(splRect.getAttribute('x')) || 0;
@@ -1269,7 +1332,6 @@
                         tvY = (parseInt(splRect.getAttribute('y')) || 95) + 5;
                     }
                 } else if (isR) {
-                    // Bij enkele rechtse deur: aan sluitkant van de rechter deur
                     const sprRect = document.getElementById('rect-spr');
                     if (sprRect) {
                         tvX = (parseInt(sprRect.getAttribute('x')) || 0) + 5;
@@ -1284,9 +1346,8 @@
                 }
             }
 
-            // Vloerslot offset rendering
             const offsetVal = document.getElementById('dim-vloerslot-pos').value || '--';
-            const visOffset = 15; // fixed visual pixels
+            const visOffset = 15;
             
             const lockGrL = document.getElementById('lock-vloer-group-l');
             const txtLockL = document.getElementById('txt-lock-offset-l');
@@ -1298,19 +1359,20 @@
             if(lockGrR) lockGrR.style.opacity = '0';
             if(txtLockR) txtLockR.style.opacity = '0';
 
+            const offsetStr = currentLang === 'nl' ? 'Offset: ' : 'Décalage: ';
+
             if(slotType.includes('vloer')) {
                 if (isDubbel) {
-                    // Bij dubbele deuren, slots centraal bij de naad
                     if(lockGrL && txtLockL) {
                         lockGrL.style.opacity = '1';
                         txtLockL.style.opacity = '1';
-                        txtLockL.textContent = `Offset: ${offsetVal}mm`;
+                        txtLockL.textContent = `${offsetStr}${offsetVal}mm`;
                         const splRect = document.getElementById('rect-spl');
                         if (splRect) {
                             let rX = parseInt(splRect.getAttribute('x')) || 0;
                             let rW = parseInt(splRect.getAttribute('width')) || 0;
                             let sluitkantX = rX + rW;
-                            let drawX = sluitkantX - visOffset - 30; // 30 is width of rect
+                            let drawX = sluitkantX - visOffset - 30;
                             document.getElementById('lock-vl').setAttribute('x', drawX);
                             document.getElementById('lock-vlc').setAttribute('cx', drawX + 15);
                             txtLockL.setAttribute('x', drawX + 15);
@@ -1319,7 +1381,7 @@
                     if(lockGrR && txtLockR) {
                         lockGrR.style.opacity = '1';
                         txtLockR.style.opacity = '1';
-                        txtLockR.textContent = `Offset: ${offsetVal}mm`;
+                        txtLockR.textContent = `${offsetStr}${offsetVal}mm`;
                         const sprRect = document.getElementById('rect-spr');
                         if (sprRect) {
                             let sluitkantX = parseInt(sprRect.getAttribute('x')) || 0;
@@ -1330,11 +1392,10 @@
                         }
                     }
                 } else if (isL) {
-                    // Enkel Links - Sluitkant is Rechts op paneel
                     if(lockGrL && txtLockL) {
                         lockGrL.style.opacity = '1';
                         txtLockL.style.opacity = '1';
-                        txtLockL.textContent = `Offset: ${offsetVal}mm`;
+                        txtLockL.textContent = `${offsetStr}${offsetVal}mm`;
                         const splRect = document.getElementById('rect-spl');
                         if (splRect) {
                             let rX = parseInt(splRect.getAttribute('x')) || 0;
@@ -1347,11 +1408,10 @@
                         }
                     }
                 } else if (isR) {
-                    // Enkel Rechts - Sluitkant is Links op paneel
                     if(lockGrR && txtLockR) {
                         lockGrR.style.opacity = '1';
                         txtLockR.style.opacity = '1';
-                        txtLockR.textContent = `Offset: ${offsetVal}mm`;
+                        txtLockR.textContent = `${offsetStr}${offsetVal}mm`;
                         const sprRect = document.getElementById('rect-spr');
                         if (sprRect) {
                             let sluitkantX = parseInt(sprRect.getAttribute('x')) || 0;
@@ -1364,7 +1424,6 @@
                 }
             }
 
-            // --- Update Callouts ---
             const calloutSwing = document.getElementById('callout-swing');
             const calloutSpl = document.getElementById('callout-spl');
             const calloutSpr = document.getElementById('callout-spr');
@@ -1378,25 +1437,19 @@
                     calloutSwing.style.opacity = '1';
                     const asmaat = document.getElementById('dim-draai-asm').value || '--';
                     const muur = document.getElementById('dim-muur-deur-diepte').value || '--';
-                    document.getElementById('txt-swing-asm').textContent = `Asm: ${asmaat} | Muur: ${muur}`;
+                    const lAxe = currentLang === 'nl' ? 'Asm' : 'Axe';
+                    const lMur = currentLang === 'nl' ? 'Muur' : 'Mur';
+                    document.getElementById('txt-swing-asm').textContent = `${lAxe}: ${asmaat} | ${lMur}: ${muur}`;
                     
                     let opX = 0, opW = 0;
                     if (isL || isDubbel) {
                         const edBoxL = document.getElementById('ed-box-l');
-                        if(edBoxL) { 
-                            opX = parseInt(edBoxL.getAttribute('x')) || 0; 
-                            opW = parseInt(edBoxL.getAttribute('width')) || 0; 
-                        }
+                        if(edBoxL) { opX = parseInt(edBoxL.getAttribute('x')) || 0; opW = parseInt(edBoxL.getAttribute('width')) || 0; }
                     } else {
                         const edBoxR = document.getElementById('ed-box-r');
-                        if(edBoxR) { 
-                            opX = parseInt(edBoxR.getAttribute('x')) || 0; 
-                            opW = parseInt(edBoxR.getAttribute('width')) || 0; 
-                        }
+                        if(edBoxR) { opX = parseInt(edBoxR.getAttribute('x')) || 0; opW = parseInt(edBoxR.getAttribute('width')) || 0; }
                     }
-                    if(opW > 0) {
-                        document.getElementById('callout-swing-line').setAttribute('d', `M ${opX + opW/2} 42 L 350 25`);
-                    }
+                    if(opW > 0) document.getElementById('callout-swing-line').setAttribute('d', `M ${opX + opW/2} 42 L 350 25`);
                 }
             } else {
                 const profB = document.getElementById('dim-prof-boven').value || '-';
@@ -1404,13 +1457,17 @@
                 const profZ = document.getElementById('dim-prof-zijkant').value || '-';
                 const profStr = `${profB}/${profO}/${profZ}`;
 
+                const lGlas = currentLang === 'nl' ? 'Glas:' : 'Verre:';
+                const lProf = currentLang === 'nl' ? 'Prof (B/O/Z):' : 'Prof (H/B/L):';
+                const lLat = currentLang === 'nl' ? 'Glaslat:' : 'Parclose:';
+
                 if (isDubbel || isL) {
                     if (calloutSpl) {
                         calloutSpl.style.opacity = '1';
-                        document.getElementById('txt-spl-title').textContent = isDubbel ? "SP L&R Info:" : "SP L Info:";
-                        document.getElementById('txt-spl-glas').textContent = "Glas: " + (document.getElementById('dim-glasmaat').value || '--');
-                        document.getElementById('txt-spl-prof').textContent = `Prof (B/O/Z): ${profStr}`;
-                        document.getElementById('txt-spl-lat').textContent = "Glaslat: " + (document.getElementById('dim-glaslat-d').value || '--');
+                        document.getElementById('txt-spl-title').textContent = isDubbel ? (currentLang === 'nl' ? "SP L&R Info:" : "PC G&D Info:") : (currentLang === 'nl' ? "SP L Info:" : "PC G Info:");
+                        document.getElementById('txt-spl-glas').textContent = `${lGlas} ` + (document.getElementById('dim-glasmaat').value || '--');
+                        document.getElementById('txt-spl-prof').textContent = `${lProf} ${profStr}`;
+                        document.getElementById('txt-spl-lat').textContent = `${lLat} ` + (document.getElementById('dim-glaslat-d').value || '--');
 
                         const rectSpl = document.getElementById('rect-spl');
                         if (rectSpl) {
@@ -1421,10 +1478,10 @@
                 } else if (isR) {
                     if (calloutSpr) {
                         calloutSpr.style.opacity = '1';
-                        document.getElementById('txt-spr-title').textContent = "SP R Info:";
-                        document.getElementById('txt-spr-glas').textContent = "Glas: " + (document.getElementById('dim-glasmaat-r').value || '--');
-                        document.getElementById('txt-spr-prof').textContent = `Prof (B/O/Z): ${profStr}`;
-                        document.getElementById('txt-spr-lat').textContent = "Glaslat: " + (document.getElementById('dim-glaslat-d-r').value || '--');
+                        document.getElementById('txt-spr-title').textContent = currentLang === 'nl' ? "SP R Info:" : "PC D Info:";
+                        document.getElementById('txt-spr-glas').textContent = `${lGlas} ` + (document.getElementById('dim-glasmaat-r').value || '--');
+                        document.getElementById('txt-spr-prof').textContent = `${lProf} ${profStr}`;
+                        document.getElementById('txt-spr-lat').textContent = `${lLat} ` + (document.getElementById('dim-glaslat-d-r').value || '--');
 
                         const rectSpr = document.getElementById('rect-spr');
                         if (rectSpr) {
@@ -1459,39 +1516,27 @@
         const deurtypeEl = document.getElementById('deurtype');
         if (deurtypeEl) {
             deurtypeEl.addEventListener('change', function(e) {
-                const openingSelect = document.getElementById('openingswijze');
                 const draaideurGroup = document.getElementById('draaideur-extra-group');
                 const aandrijvingSelect = document.getElementById('aandrijving-select');
                 
-                if (!openingSelect) return;
+                updateSelectOptions(); // refresh the dropdown choices via dictionary
                 
                 if (e.target.value === 'Draaideur') {
                     if (draaideurGroup) draaideurGroup.classList.remove('hidden');
-                    openingSelect.innerHTML = `
-                        <option value="Dubbel Binnendraaiend">Dubbel Binnendraaiend</option>
-                        <option value="Dubbel Buitendraaiend">Dubbel Buitendraaiend</option>
-                        <option value="Enkel DIN Links Binnendraaiend">Enkel DIN Links Binnendraaiend</option>
-                        <option value="Enkel DIN Links Buitendraaiend">Enkel DIN Links Buitendraaiend</option>
-                        <option value="Enkel DIN Rechts Binnendraaiend">Enkel DIN Rechts Binnendraaiend</option>
-                        <option value="Enkel DIN Rechts Buitendraaiend">Enkel DIN Rechts Buitendraaiend</option>
-                    `;
                     if (aandrijvingSelect) {
+                        const opt = currentLang === 'nl' ? "Kies model..." : "Choisir modèle...";
                         aandrijvingSelect.innerHTML = `
-                            <option value="" disabled selected>Kies model...</option>
+                            <option value="" disabled selected>${opt}</option>
                             <option>ED 100</option>
                             <option>ED 250</option>
                         `;
                     }
                 } else {
                     if (draaideurGroup) draaideurGroup.classList.add('hidden');
-                    openingSelect.innerHTML = `
-                        <option value="Dubbel (Centraal)">Dubbel (Centraal)</option>
-                        <option value="Linksopenend (OG)">Linksopenend (OG)</option>
-                        <option value="Rechtsopenend (OR)">Rechtsopenend (OR)</option>
-                    `;
                     if (aandrijvingSelect) {
+                        const opt = currentLang === 'nl' ? "Kies model..." : "Choisir modèle...";
                         aandrijvingSelect.innerHTML = `
-                            <option value="" disabled selected>Kies model...</option>
+                            <option value="" disabled selected>${opt}</option>
                             <optgroup label="Schuifdeuren - ES PROLINE">
                                 <option>ES PROLINE 250/130</option>
                                 <option>ES PROLINE 250/180</option>
@@ -1507,6 +1552,8 @@
         }
 
         window.onload = function() {
+            applyTranslations();
+            updateSelectOptions();
             updateVisual();
         };
     </script>
