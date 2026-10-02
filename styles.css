@@ -272,3 +272,79 @@ body {
     }
     .page-number:after { content: counter(page); }
 }
+
+/* ===== PDF-export in standalone (body.pdf-mode) =====
+   html2pdf.js tekent het scherm, niet @media print. De regels hieronder
+   kopiëren het printblok hierboven — dat blok blijft ongewijzigd — zodat
+   de PDF dezelfde A4-opmaak volgt. De klasse staat enkel tijdens het
+   maken van de PDF op <body>. */
+body.pdf-mode {
+    background-color: white;
+    color: black;
+    padding-bottom: 0;
+    counter-reset: page;
+}
+body.pdf-mode .no-print { display: none !important; }
+body.pdf-mode .print-only { display: block; }
+
+body.pdf-mode .ios-group {
+    margin: 0 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+}
+body.pdf-mode .ios-header {
+    break-after: avoid;
+    page-break-after: avoid;
+    margin: 20px 0 5px 10px;
+    color: black !important;
+    font-size: 12px !important;
+    font-weight: bold;
+}
+body.pdf-mode .ios-row { border-bottom: 1px solid #eee; padding: 6px 8px; min-height: auto; }
+body.pdf-mode .ios-label,
+body.pdf-mode .ios-input,
+body.pdf-mode .ios-select { color: black !important; font-size: 11px !important; text-align: left !important; }
+body.pdf-mode #door-visual { max-height: 95mm; }
+body.pdf-mode #opmeting-form { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+
+/* Zelfde voettekst als bij afdrukken. html2canvas herhaalt position:fixed
+   niet per pagina; print.js verbergt dit element tijdens het rasteren en
+   tekent bestandsnaam + paginanummer met jsPDF op elke pagina. */
+body.pdf-mode .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: -8mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8pt;
+    border-top: 1px solid #aaa;
+    padding-top: 5px;
+    background: white;
+    height: 30px;
+    counter-increment: page;
+}
+body.pdf-mode .page-number:after { content: counter(page); }
+
+/* Hulpregels enkel voor de raster-PDF (raken window.print() niet). */
+body.pdf-mode .pdf-keep {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+}
+body.pdf-mode .ios-row {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+}
+body.pdf-mode .pdf-control-source { display: none !important; }
+body.pdf-mode .ios-input::placeholder,
+body.pdf-mode textarea::placeholder { color: #8e8e93 !important; opacity: 1; }
+body.pdf-mode .pdf-select-value {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: black !important;
+    font-size: 11px !important;
+    text-align: left !important;
+    line-height: 1.3;
+}

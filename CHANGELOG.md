@@ -1,5 +1,16 @@
 # CHANGELOG – Opmeting Mesure v4.2 (opgeschoond)
 
+## PDF-export in app-modus (html2pdf)
+
+In standalone (iOS-beginscherm of `display-mode: standalone`) doet `window.print()` niets. De printknoppen maken dan een A4-PDF in de app en bieden die aan via de deelsheet (`navigator.share` met bestand) of, als dat niet kan, via een blob-URL-download. Buiten standalone blijft `window.print()` ongewijzigd.
+
+Extra bibliotheek, lui geladen enkel op het moment van die PDF-export (niet bij een gewone afdruk):
+
+- html2pdf.js **0.10.2** (bundel van html2canvas + jsPDF)
+- CDN: `https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js`
+
+De bestaande `@media print`-regels zijn niet gewijzigd. `body.pdf-mode` in `styles.css` herhaalt ze, omdat html2pdf het scherm rastert en `@media print` daarbij niet toepast.
+
 Doel: opschonen en optimaliseren zonder wijziging van uiterlijk, teksten, kleuren, spacing of functionaliteit.
 Opslagsleutels, veld-id's en het JSON-exportformaat zijn **ongewijzigd** → geen migratie nodig; oude dossiers en oude JSON-exports werken rechtstreeks.
 
