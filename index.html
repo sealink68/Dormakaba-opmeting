@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Opmeting Mesure v4.2</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <!-- Externe afhankelijkheden (online): Tailwind CDN en Inter-font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="navbar no-print">
+    <button type="button" id="btn-clear-all" class="navbar-btn" data-i18n="nav_clear">Wis Alles</button>
+    <button type="button" id="btn-dossiers" class="navbar-btn">Dossiers</button>
+    <button type="button" id="btn-import-json" class="navbar-btn">Import</button>
+    <button type="button" id="btn-export-json" class="navbar-btn">Export</button>
+    <input type="file" id="json-file-input" accept="application/json,.json" hidden>
+
+    <!-- Taalwissel NL/FR -->
+    <div class="flex items-center gap-2 mx-2">
+      <span class="text-[10px] font-bold text-[#007AFF]" id="lang-lbl-nl">NL</span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="lang-toggle" class="sr-only peer">
+        <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#007AFF]"></div>
+      </label>
+      <span class="text-[10px] font-bold text-gray-400" id="lang-lbl-fr">FR</span>
+    </div>
+
+    <button type="button" id="btn-ios" class="navbar-btn">iOS</button><button class="navbar-btn font-semibold" data-action="print" data-i18n="nav_print">Print PDF</button>
+  </div>
+
+  <div class="print-only text-center py-4 border-b-2 border-black mb-4">
+    <h1 class="text-2xl font-bold uppercase tracking-wider" data-i18n="print_title">Dormakaba Opmetingsblad</h1>
+    <p class="text-sm"><span data-i18n="print_subtitle">Vervanging / Nieuwe Installatie</span> <span id="print-deurlocatie" class="font-bold ml-2"></span></p><div id="print-meta"></div>
+  </div>
+
+  <dialog id="dossier-dialog" class="dossier-dialog no-print">
+    <div class="dossier-head">
+      <strong id="dos-title">Mijn dossiers</strong>
+      <button type="button" id="dos-close">×</button>
+    </div>
+    <div class="dossier-tools">
+      <input id="dos-search" type="search" placeholder="Zoek dossier of werf">
+      <button type="button" id="dos-new">Nieuw dossier</button>
+    </div>
+    <div id="dossier-list"></div>
+  </dialog>
+  <div id="validation-box" class="validation-box no-print"></div>
+  <form id="opmeting-form" class="pb-8">
+
+    <div class="ios-header" data-i18n="hdr_dossier">Dossier & Klant</div>
+    <div id="klant-group" class="ios-group">
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_werf">Werf / Chantier</div>
+        <input id="werf" required type="text" class="ios-input" data-i18n-placeholder="ph_werf" placeholder="Naam werf">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_datum">Datum opm.</div>
+        <input id="datum-opmeting" required type="date" class="ios-input">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_dossier">Dossiernr.</div>
+        <input id="dossiernummer" required type="text" class="ios-input" data-i18n-placeholder="ph_dossier" placeholder="bv. 12345">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_contact">Contactpersoon</div>
+        <input id="contactpersoon" required type="text" class="ios-input" data-i18n-placeholder="ph_naam" placeholder="Naam">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_telefoon">Telefoon</div>
+        <input id="telefoon" type="tel" class="ios-input" placeholder="04xx xx xx xx">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_locatie">Locatie</div>
+        <input id="locatie" required type="text" class="ios-input" data-i18n-placeholder="ph_locatie" placeholder="Straat + Gem.">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_deurlocatie">Deurlocatie (Gebouw)</div>
+        <input type="text" id="deurlocatie" required class="ios-input" data-i18n-placeholder="ph_deurlocatie" placeholder="bv. Hoofdingang, Gang 2">
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-right: 16px; margin-top: 24px; margin-bottom: 8px;" class="no-print">
+      <div class="ios-header" style="margin: 0 0 0 32px;" data-i18n="hdr_schets">Schets / Technische Visualisation (Live)</div>
+      <button type="button" id="btn-reset-fields" class="text-xs font-semibold text-red-500 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-200 active:bg-gray-50 transition-colors" data-i18n="btn_reset">
+        ↺ Reset Velden
+      </button>
+    </div>
+
+    <div class="ios-group bg-white p-4 flex justify-center mt-0">
+      <svg id="door-visual" viewBox="-40 0 680 500" class="w-full h-auto max-w-xl mx-auto block">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#007AFF" />
+          </marker>
+          <marker id="arrow-blue-thick" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M 0 2 L 10 5 L 0 8 z" fill="#007AFF" />
+          </marker>
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+          </marker>
+        </defs>
+
+        <!-- LH Dimension -->
+        <line x1="-15" y1="90" x2="-15" y2="450" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+        <rect x="-30" y="220" width="30" height="100" fill="white" opacity="0.9" />
+        <text id="svg-val-lh" x="-15" y="270" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF" transform="rotate(-90, -15, 270)">LH: -- mm</text>
+
+        <!-- TH Dimension -->
+        <line x1="615" y1="50" x2="615" y2="450" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+        <rect x="600" y="200" width="30" height="100" fill="white" opacity="0.9" />
+        <text id="svg-val-th" x="615" y="250" text-anchor="middle" font-size="14" font-weight="bold" fill="#007AFF" transform="rotate(-90, 615, 250)">TH: -- mm</text>
+
+        <!-- TB Dimension -->
+        <line x1="50" y1="25" x2="550" y2="25" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+        <rect x="230" y="15" width="140" height="20" fill="white" />
+        <text id="svg-val-tb" x="300" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF">TB: -- mm</text>
+
+        <!-- Walls & Frame Outline -->
+        <rect x="10" y="50" width="40" height="400" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="550" y="50" width="40" height="400" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="50" y="50" width="500" height="400" fill="none" stroke="#333" stroke-width="3" />
+
+        <!-- Operator Header (Kap) -->
+        <rect id="svg-kap-rect" x="50" y="50" width="500" height="40" fill="#f3f4f6" stroke="#333" stroke-width="2" />
+        <text id="svg-val-kap" x="300" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Kap H: -- / D: --</text>
+        <text id="svg-val-ral" x="300" y="84" text-anchor="middle" font-size="11" font-weight="bold" fill="#333" opacity="0.8"></text>
+
+        <!-- Swing Operators L & R -->
+        <g id="svg-swing-op-l" opacity="0">
+          <rect id="ed-box-l" x="0" y="42" width="0" height="20" fill="#1e293b" rx="3" stroke="#fff" stroke-width="1"/>
+          <text id="ed-txt-l" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">ED 100/250 (L)</text>
+          <g id="arm-glij-l" opacity="0">
+            <rect id="arm-glij-rail-l" x="0" y="90" width="0" height="8" fill="#f8fafc" stroke="#334155" stroke-width="2" rx="3"/>
+            <line id="arm-glij-line-l" y1="60" y2="94" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+            <circle id="arm-glij-dot-l" cy="94" r="5" fill="#0f172a"/>
+          </g>
+          <g id="arm-schaar-l" opacity="0">
+            <polyline id="arm-schaar-line-l" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle id="arm-schaar-dot-l" cy="100" r="5" fill="#0f172a"/>
+          </g>
+        </g>
+
+        <g id="svg-swing-op-r" opacity="0">
+          <rect id="ed-box-r" x="0" y="42" width="0" height="20" fill="#1e293b" rx="3" stroke="#fff" stroke-width="1"/>
+          <text id="ed-txt-r" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">ED 100/250 (R)</text>
+          <g id="arm-glij-r" opacity="0">
+            <rect id="arm-glij-rail-r" x="0" y="90" width="0" height="8" fill="#f8fafc" stroke="#334155" stroke-width="2" rx="3"/>
+            <line id="arm-glij-line-r" y1="60" y2="94" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+            <circle id="arm-glij-dot-r" cy="94" r="5" fill="#0f172a"/>
+          </g>
+          <g id="arm-schaar-r" opacity="0">
+            <polyline id="arm-schaar-line-r" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle id="arm-schaar-dot-r" cy="100" r="5" fill="#0f172a"/>
+          </g>
+        </g>
+
+        <g id="lock-em-kap" opacity="0">
+          <rect x="420" y="54" width="25" height="10" fill="#ef4444" rx="2" />
+          <circle cx="432" cy="59" r="2" fill="white" />
+        </g>
+
+        <line x1="30" y1="450" x2="570" y2="450" stroke="#333" stroke-width="4" />
+        <g id="new-guides">
+          <g id="guide-full" opacity="0">
+            <rect id="guide-full-rect" x="50" y="438" width="500" height="9" rx="3" fill="#6366f1"/>
+            <rect id="guide-full-rect-2" x="50" y="443" width="500" height="4" rx="2" fill="#f59e0b" style="display:none;"/>
+            <text id="guide-full-text" x="300" y="435" text-anchor="middle" font-size="9"></text>
+          </g>
+          <g id="guide-ap-l" opacity="0">
+            <rect id="guide-ap-l-rect" y="438" height="9" fill="#ef4444"/>
+          </g>
+          <g id="guide-ap-r" opacity="0">
+            <rect id="guide-ap-r-rect" y="438" height="9" fill="#ef4444"/>
+          </g>
+        </g>
+
+        <!-- Panelen (VP & SP) -->
+        <g id="svg-group-vpl">
+          <rect id="rect-vpl" x="0" y="90" width="0" height="358" fill="#e0f2fe" opacity="0.6" stroke="#333" stroke-width="1.5"/>
+          <text id="text-vpl" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">VP L</text>
+          <text id="svg-val-vpl-dim" y="255" text-anchor="middle" font-size="10" fill="#0284c7">-- x --</text>
+        </g>
+
+        <g id="svg-group-spl">
+          <rect id="rect-spl-2" x="0" y="105" width="0" height="340" fill="#bae6fd" opacity="0.6" stroke="#0369a1" stroke-width="1.5" style="display:none;"/>
+          <rect id="rect-spl" x="0" y="95" width="0" height="350" fill="#bae6fd" opacity="0.9" stroke="#0284c7" stroke-width="2"/>
+          <g id="hinge-group-left" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+          <g id="hinge-group-right" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+          <text id="text-spl" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">SP L</text>
+          <text id="svg-val-spl-dim" y="255" text-anchor="middle" font-size="10" fill="#0369a1">-- x --</text>
+          <line id="arrow-dir-spl" stroke="#10b981" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-green)" opacity="0"/>
+          <g id="rail-u-l" opacity="0">
+            <rect x="50" y="430" width="100" height="12" fill="#f59e0b" rx="2"/>
+            <text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">U-Rail</text>
+          </g>
+          <g id="rail-l-l" opacity="0">
+            <rect x="50" y="430" width="100" height="12" fill="#10b981" rx="2"/>
+            <text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">L-Rail</text>
+          </g>
+          <g id="rail-omega-l" opacity="0">
+            <rect x="50" y="430" width="100" height="12" fill="#6366f1" rx="2"/>
+            <text x="100" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Omega-rail</text>
+          </g>
+          <g class="lock-vloer" id="lock-vloer-group-l" opacity="0">
+            <rect id="lock-vl" x="180" y="420" width="30" height="15" fill="#ef4444" rx="2"/>
+            <circle id="lock-vlc" cx="195" cy="427" r="3" fill="white"/>
+          </g>
+          <text id="txt-lock-offset-l" x="180" y="415" font-size="9" font-weight="bold" fill="#ef4444" opacity="0" text-anchor="middle">Offset: --</text>
+          <circle id="handle-l" cy="270" r="6" fill="#0284c7" opacity="0"/>
+        </g>
+
+        <g id="svg-group-spr">
+          <rect id="rect-spr-2" x="0" y="105" width="0" height="340" fill="#bae6fd" opacity="0.6" stroke="#0369a1" stroke-width="1.5" style="display:none;"/>
+          <rect id="rect-spr" x="0" y="95" width="0" height="350" fill="#bae6fd" opacity="0.9" stroke="#0284c7" stroke-width="2"/>
+          <g id="hinge-group-left-r" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+          <g id="hinge-group-right-r" opacity="0"><rect x="0" y="150" width="8" height="30" fill="#333" rx="2"/><rect x="0" y="350" width="8" height="30" fill="#333" rx="2"/></g>
+          <text id="text-spr" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">SP R</text>
+          <text id="svg-val-spr-dim" y="255" text-anchor="middle" font-size="10" fill="#0369a1">-- x --</text>
+          <line id="arrow-dir-spr" stroke="#10b981" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-green)" opacity="0"/>
+          <g id="rail-u-r" opacity="0">
+            <rect x="450" y="430" width="100" height="12" fill="#f59e0b" rx="2"/>
+            <text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">U-Rail</text>
+          </g>
+          <g id="rail-l-r" opacity="0">
+            <rect x="450" y="430" width="100" height="12" fill="#10b981" rx="2"/>
+            <text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">L-Rail</text>
+          </g>
+          <g id="rail-omega-r" opacity="0">
+            <rect x="450" y="430" width="100" height="12" fill="#6366f1" rx="2"/>
+            <text x="500" y="439" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Omega-rail</text>
+          </g>
+          <g class="lock-vloer" id="lock-vloer-group-r" opacity="0">
+            <rect id="lock-vr" x="390" y="420" width="30" height="15" fill="#ef4444" rx="2"/>
+            <circle id="lock-vrc" cx="405" cy="427" r="3" fill="white"/>
+          </g>
+          <text id="txt-lock-offset-r" x="405" y="415" font-size="9" font-weight="bold" fill="#ef4444" opacity="0" text-anchor="middle">Offset: --</text>
+          <circle id="handle-r" cy="270" r="6" fill="#0284c7" opacity="0"/>
+        </g>
+
+        <g id="svg-group-vpr">
+          <rect id="rect-vpr" x="0" y="90" width="0" height="358" fill="#e0f2fe" opacity="0.6" stroke="#333" stroke-width="1.5"/>
+          <text id="text-vpr" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">VP R</text>
+          <text id="svg-val-vpr-dim" y="255" text-anchor="middle" font-size="10" fill="#0284c7">-- x --</text>
+        </g>
+
+        <!-- Kleine vloergeleiders (U/L-Model) aan de rand van de doorgangsopening, op het vast paneel (of de muur).
+             Boven de panelen getekend; witte rand voor leesbaarheid. Positie: zie form.js updateFloorGuide(). -->
+        <g id="small-guides">
+          <g id="guide-small-u" opacity="0">
+            <path class="guide-halo" d="M128 420v21h14v-21" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+            <path class="guide-line" d="M128 420v21h14v-21" fill="none" stroke="#f59e0b" stroke-width="5"/>
+          </g>
+          <g id="guide-small-l" opacity="0">
+            <path class="guide-halo" d="M128 420v21h14" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+            <path class="guide-line" d="M128 420v21h14" fill="none" stroke="#10b981" stroke-width="5"/>
+          </g>
+          <g id="guide-small-u-r" opacity="0">
+            <path class="guide-halo" d="M458 420v21h14v-21" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+            <path class="guide-line" d="M458 420v21h14v-21" fill="none" stroke="#f59e0b" stroke-width="5"/>
+          </g>
+          <g id="guide-small-l-r" opacity="0">
+            <path class="guide-halo" d="M472 420v21h-14" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+            <path class="guide-line" d="M472 420v21h-14" fill="none" stroke="#10b981" stroke-width="5"/>
+          </g>
+        </g>
+
+        <g id="lock-tv" opacity="0">
+          <rect id="rect-tv-lock" x="0" y="0" width="30" height="12" fill="#8b5cf6" rx="2" />
+          <text id="text-tv-lock" x="15" y="9" text-anchor="middle" font-size="8" font-weight="bold" fill="white">TV</text>
+        </g>
+
+        <!-- LB Dimension -->
+        <line id="line-lb" x1="230" y1="465" x2="370" y2="465" stroke="#007AFF" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+        <rect id="rect-lb" x="250" y="455" width="100" height="20" fill="white" opacity="0.9"/>
+        <text id="svg-val-lb" x="300" y="470" text-anchor="middle" font-size="13" font-weight="bold" fill="#007AFF">LB: -- mm</text>
+
+        <!-- INFO DIALOGS / CALLOUTS -->
+        <g id="callout-swing" opacity="0">
+          <path id="callout-swing-line" d="M 300 45 L 350 25" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <rect x="350" y="10" width="190" height="25" fill="white" stroke="#007AFF" stroke-width="1" rx="4" opacity="0.95"/>
+          <text id="txt-swing-asm" x="355" y="26" font-size="9" font-weight="bold" fill="#007AFF">Asm: -- | Muur: --</text>
+        </g>
+        <g id="callout-spl" opacity="0">
+          <path id="callout-spl-line" d="M 75 180 L 150 200" stroke="#0369a1" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <rect x="10" y="115" width="130" height="60" fill="white" stroke="#0369a1" stroke-width="1" rx="4" opacity="0.95"/>
+          <text id="txt-spl-title" x="15" y="130" font-size="9" font-weight="bold" fill="#0369a1">SP L Info:</text>
+          <text id="txt-spl-glas" x="15" y="143" font-size="8" fill="#333">Glas: --</text>
+          <text id="txt-spl-prof" x="15" y="155" font-size="8" fill="#333">Prof B/O/SK/OK: --/--/--/--</text>
+          <text id="txt-spl-lat" x="15" y="167" font-size="8" fill="#333">Glaslat: --</text>
+        </g>
+        <g id="callout-spr" opacity="0">
+          <path id="callout-spr-line" d="M 525 180 L 450 200" stroke="#0369a1" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <rect x="460" y="115" width="130" height="60" fill="white" stroke="#0369a1" stroke-width="1" rx="4" opacity="0.95"/>
+          <text id="txt-spr-title" x="465" y="130" font-size="9" font-weight="bold" fill="#0369a1">SP R Info:</text>
+          <text id="txt-spr-glas" x="465" y="143" font-size="8" fill="#333">Glas: --</text>
+          <text id="txt-spr-prof" x="465" y="155" font-size="8" fill="#333">Prof B/O/SK/OK: --/--/--/--</text>
+          <text id="txt-spr-lat" x="465" y="167" font-size="8" fill="#333">Glaslat: --</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="ios-header" data-i18n="hdr_vervangen">Wat wordt vervangen?</div>
+    <div class="ios-group p-2">
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_aandrijving">Aandrijfsysteem</div>
+        <input type="checkbox" id="replace-aandrijving" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100 pl-8 bg-gray-50/50">
+        <div class="ios-label !w-auto text-sm text-gray-500" data-i18n="opt_zonder_kap">└ Zonder Kap</div>
+        <input type="checkbox" id="replace-zonder-kap" class="accent-[#007AFF] w-4 h-4">
+      </label>
+
+      <div class="ios-row col-layout border-b border-gray-100 py-2">
+        <div class="ios-label !w-full text-sm text-gray-500 mb-1" data-i18n="lbl_oud_systeem">Oud Systeem (Bestaand)</div>
+        <input type="text" id="oud-systeem" class="ios-input !text-left w-full bg-gray-50 rounded p-2 text-sm" data-i18n-placeholder="ph_oud_systeem" placeholder="bv. Oude Besam / Dorma ...">
+      </div>
+
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_vleugel_l">Linker vleugel</div>
+        <input type="checkbox" id="replace-vleugel-l" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_vleugel_r">Rechter vleugel</div>
+        <input type="checkbox" id="replace-vleugel-r" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_beide_vleugels">Beide vleugels</div>
+        <input type="checkbox" id="replace-beide-vleugels" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_vast_l">Vast paneel links</div>
+        <input type="checkbox" id="replace-vast-l" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+        <div class="ios-label !w-auto" data-i18n="opt_vast_r">Vast paneel rechts</div>
+        <input type="checkbox" id="replace-vast-r" class="accent-[#007AFF] w-5 h-5">
+      </label>
+      <label class="ios-row cursor-pointer hover:bg-gray-50 border-b-0">
+        <div class="ios-label !w-auto" data-i18n="opt_beide_vast">Beide vaste panelen</div>
+        <input type="checkbox" id="replace-beide-vast" class="accent-[#007AFF] w-5 h-5">
+      </label>
+    </div>
+
+    <div class="ios-header" data-i18n="hdr_config">Systeem Configuratie</div>
+    <div class="ios-group">
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_deurtype">Deurtype</div>
+        <select id="deurtype" class="ios-select">
+          <option value="Schuifdeur">Schuifdeur</option>
+          <option value="Draaideur">Draaideur</option>
+        </select>
+      </div>
+
+      <div id="draaideur-extra-group" class="hidden">
+        <div class="ios-row bg-gray-50">
+          <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_draaideur_uitrusting">Draaideur Uitrusting & Arm</div>
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_armsoort">Armsoort</div>
+          <select id="draaideur-arm" class="ios-select font-semibold">
+            <option value="Glijarm">Glijarm (Push / Pull)</option>
+            <option value="Schaararm">Schaararm (Push / Pull)</option>
+          </select>
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_asmaat">Asmaat / Diepte</div>
+          <input type="number" id="dim-draai-asm" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" style="font-size: 15px;" data-i18n="lbl_muur_deur_diepte">Diepte tussen muur en deurvlak</div>
+          <input type="number" id="dim-muur-deur-diepte" class="ios-input" placeholder="mm (+ of -)">
+        </div>
+      </div>
+
+      <div class="ios-row" id="row-profielsysteem">
+        <div class="ios-label" data-i18n="lbl_profiel">Profielsysteem</div>
+        <select id="profielsysteem" class="ios-select">
+          <option value="" disabled selected data-i18n="opt_kies_profiel">Kies profiel/type...</option>
+          <option>ST (Standaard)</option>
+          <option>FLEX</option>
+          <option>FLEX Green</option>
+          <option>TST (Telescopisch)</option>
+          <option>Antipaniek</option>
+          <option>FST</option>
+          <option>Volledig Glas</option>
+          <option data-i18n="opt_ander">Ander / Zonder</option>
+        </select>
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_aandrijving">Nieuwe Aandrijving</div>
+        <select id="aandrijving-select" class="ios-select font-semibold">
+          <option value="" disabled selected data-i18n="opt_kies_model">Kies model...</option>
+          <optgroup label="Schuifdeuren - ES PROLINE">
+            <option>ES PROLINE 250/130</option>
+            <option>ES PROLINE 250/180</option>
+            <option>ES PROLINE 400</option>
+            <option>ES PROLINE 500</option>
+            <option>CS 80 MAGNEO</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="proline-security-row" class="ios-row hidden">
+        <div class="ios-label" data-i18n="lbl_security">Security</div>
+        <div class="flex gap-4">
+          <label>RC2 <input type="checkbox" id="security-rc2" class="accent-[#007AFF] w-5 h-5">
+          </label>
+          <label>RC3 <input type="checkbox" id="security-rc3" class="accent-[#007AFF] w-5 h-5">
+          </label>
+        </div>
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_openingswijze">Openingswijze</div>
+        <select id="openingswijze" class="ios-select">
+          <option value="Dubbel (Centraal)">Dubbel (Centraal)</option>
+          <option value="Linksopenend (OG)">Linksopenend (OG)</option>
+          <option value="Rechtsopenend (OR)">Rechtsopenend (OR)</option>
+        </select>
+      </div>
+
+      <div class="ios-row" id="koordophanging-row">
+        <div class="ios-label" data-i18n="lbl_koord">Koordophanging systeem</div>
+        <select id="koordophanging" class="ios-select">
+          <option data-i18n="opt_nee">Nee</option>
+          <option data-i18n="opt_ja">Ja</option>
+        </select>
+      </div>
+
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_ral">RAL Kleur / Finish</div>
+        <div class="w-full flex flex-col items-end">
+          <input type="text" id="ral-kleur" class="ios-input mb-2" data-i18n-placeholder="ph_ral" placeholder="bv. RAL 7016 of Anodisé">
+          <div id="ral-status" class="text-xs text-gray-500 mt-1"></div>
+          <div class="flex flex-wrap gap-2 justify-end mt-1 w-full" id="ral-palette"></div>
+          <div id="ral-results" class="ral-results no-print"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ios-header" data-i18n="hdr_globale_afm">Globale Afmetingen (mm)</div>
+    <div class="ios-group">
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_tb">Totaal Breedte (TB)</div>
+        <input type="number" id="dim-tb" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_th">Totaal Hoogte (TH)</div>
+        <input type="number" id="dim-th" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_lb">Loopbreedte (LB)</div>
+        <input type="number" id="dim-lb" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_lh">Loophoogte (LH)</div>
+        <input type="number" id="dim-lh" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_kap_h">Kap Hoogte</div>
+        <input type="number" id="dim-kap-h" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_kap_d">Kap Diepte</div>
+        <input type="number" id="dim-kap-d" inputmode="decimal" class="ios-input" placeholder="mm">
+      </div>
+    </div>
+
+    <div id="lbl-panel-header" class="ios-header" data-i18n="hdr_panelen">Schuifpaneel & Vaste Panelen</div>
+
+    <div class="ios-group">
+      <div class="ios-row bg-gray-50">
+        <div id="lbl-panel-title-sl" class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Schuifpaneel Links (SP L)</div>
+      </div>
+      <div class="ios-row">
+        <div id="lbl-panel-b-l" class="ios-label">Breedte (SP L)</div>
+        <input type="number" id="dim-spl-b" class="ios-input" placeholder="mm">
+      </div>
+      <div class="ios-row">
+        <div id="lbl-panel-h-l" class="ios-label">Hoogte (SP L)</div>
+        <input type="number" id="dim-spl-h" class="ios-input" placeholder="mm">
+      </div>
+      <div id="sliding-panel-extra-group" class="w-full">
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_glaslat">Glaslatten Dikte</div>
+          <input type="number" id="dim-glaslat-d" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_glasmaat">Glasmaat (tot glaslatten)</div>
+          <input type="text" id="dim-glasmaat" class="ios-input" placeholder="B x H mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_glastype">Glastype</div>
+          <select id="glas-type-l" class="ios-select">
+            <option value="" data-i18n="opt_kies_glas">Kies glastype...</option>
+            <option data-i18n="glass_float">Float helder</option>
+            <option data-i18n="glass_tempered">Gehard veiligheidsglas</option>
+            <option data-i18n="glass_laminated">Gelaagd veiligheidsglas</option>
+            <option data-i18n="glass_double">Isolatieglas dubbel</option>
+            <option data-i18n="glass_triple">Isolatieglas triple</option>
+            <option data-i18n="glass_lowe">Low-E isolatieglas</option>
+            <option data-i18n="glass_acoustic">Akoestisch gelaagd glas</option>
+            <option data-i18n="glass_fire">Brandwerend glas</option>
+            <option data-i18n="glass_wired">Draadglas</option>
+            <option data-i18n="glass_frosted">Mat / gezuurd glas</option>
+            <option data-i18n="glass_tinted">Getint / zonwerend glas</option>
+            <option data-i18n="glass_other">Ander</option>
+          </select>
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_glascode">Bestaande glascode</div>
+          <input id="glas-code-l" class="ios-input" data-i18n-placeholder="ph_glascode" placeholder="bv. 44.2 / 10 / 6">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_prof_boven">Profieldikte Boven</div>
+          <input type="number" id="dim-prof-boven" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label" data-i18n="lbl_prof_onder">Profieldikte Onder</div>
+          <input type="number" id="dim-prof-onder" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label"><span data-i18n="lbl_prof_sluit">Profieldikte Sluitkant</span> <span class="panel-suffix" data-panel-side="l">(SP L)</span></div>
+          <input type="number" id="dim-prof-sluitkant" inputmode="decimal" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div class="ios-label"><span data-i18n="lbl_prof_open">Profieldikte Openingskant</span> <span class="panel-suffix" data-panel-side="l">(SP L)</span></div>
+          <input type="number" id="dim-prof-openingskant" inputmode="decimal" class="ios-input" placeholder="mm">
+        </div>
+      </div>
+
+      <div id="spr-dimension-group">
+        <div class="ios-row bg-gray-50">
+          <div id="lbl-panel-title-r" class="font-semibold text-sm text-gray-500 uppercase tracking-wide">Schuifpaneel Rechts (SP R)</div>
+        </div>
+        <div class="ios-row">
+          <div id="lbl-panel-b-r" class="ios-label">Breedte (SP R)</div>
+          <input type="number" id="dim-spr-b" class="ios-input" placeholder="mm">
+        </div>
+        <div class="ios-row">
+          <div id="lbl-panel-h-r" class="ios-label">Hoogte (SP R)</div>
+          <input type="number" id="dim-spr-h" class="ios-input" placeholder="mm">
+        </div>
+        <div id="sliding-panel-extra-r-group" class="w-full">
+          <div class="ios-row">
+            <div class="ios-label" data-i18n="lbl_glaslat_r">Glaslatten Dikte (R)</div>
+            <input type="number" id="dim-glaslat-d-r" class="ios-input" placeholder="mm">
+          </div>
+          <div class="ios-row">
+            <div class="ios-label" data-i18n="lbl_glasmaat_r">Glasmaat (R)</div>
+            <input type="text" id="dim-glasmaat-r" class="ios-input" placeholder="B x H mm">
+          </div>
+          <div class="ios-row">
+            <div class="ios-label" data-i18n="lbl_glastype_r">Glastype (R)</div>
+            <select id="glas-type-r" class="ios-select">
+              <option value="" data-i18n="opt_kies_glas">Kies glastype...</option>
+              <option data-i18n="glass_float">Float helder</option>
+              <option data-i18n="glass_tempered">Gehard veiligheidsglas</option>
+              <option data-i18n="glass_laminated">Gelaagd veiligheidsglas</option>
+              <option data-i18n="glass_double">Isolatieglas dubbel</option>
+              <option data-i18n="glass_triple">Isolatieglas triple</option>
+              <option data-i18n="glass_lowe">Low-E isolatieglas</option>
+              <option data-i18n="glass_acoustic">Akoestisch gelaagd glas</option>
+              <option data-i18n="glass_fire">Brandwerend glas</option>
+              <option data-i18n="glass_wired">Draadglas</option>
+              <option data-i18n="glass_frosted">Mat / gezuurd glas</option>
+              <option data-i18n="glass_tinted">Getint / zonwerend glas</option>
+              <option data-i18n="glass_other">Ander</option>
+            </select>
+          </div>
+          <div class="ios-row">
+            <div class="ios-label" data-i18n="lbl_glascode_r">Bestaande glascode (R)</div>
+            <input id="glas-code-r" class="ios-input" data-i18n-placeholder="ph_glascode" placeholder="bv. 44.2 / 10 / 6">
+          </div>
+          <div class="ios-row">
+            <div class="ios-label"><span data-i18n="lbl_prof_sluit">Profieldikte Sluitkant</span> <span class="panel-suffix" data-panel-side="r">(SP R)</span></div>
+            <input type="number" id="dim-prof-sluitkant-r" inputmode="decimal" class="ios-input" placeholder="mm">
+          </div>
+          <div class="ios-row">
+            <div class="ios-label"><span data-i18n="lbl_prof_open">Profieldikte Openingskant</span> <span class="panel-suffix" data-panel-side="r">(SP R)</span></div>
+            <input type="number" id="dim-prof-openingskant-r" inputmode="decimal" class="ios-input" placeholder="mm">
+          </div>
+        </div>
+      </div>
+
+      <div class="ios-row bg-gray-50">
+        <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_vp_l">Vast Paneel Links (VP L)</div>
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_b_vpl">Breedte (VP L)</div>
+        <input type="number" id="dim-vpl-b" class="ios-input" data-i18n-placeholder="ph_vp_breedte" placeholder="mm (0 = geen)">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_h_vpl">Hoogte (VP L)</div>
+        <input type="number" id="dim-vpl-h" class="ios-input" placeholder="mm">
+      </div>
+
+      <div class="ios-row bg-gray-50">
+        <div class="font-semibold text-sm text-gray-500 uppercase tracking-wide" data-i18n="lbl_vp_r">Vast Paneel Rechts (VP R)</div>
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_b_vpr">Breedte (VP R)</div>
+        <input type="number" id="dim-vpr-b" class="ios-input" data-i18n-placeholder="ph_vp_breedte" placeholder="mm (0 = geen)">
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_h_vpr">Hoogte (VP R)</div>
+        <input type="number" id="dim-vpr-h" class="ios-input" placeholder="mm">
+      </div>
+    </div>
+
+    <div class="ios-header" data-i18n="hdr_opties">Onderdelen & Opties</div>
+    <div class="ios-group">
+      <div class="ios-row" id="vloergeleider-row">
+        <div class="ios-label" data-i18n="lbl_vloergeleider">Vloergeleider Type</div>
+        <div class="flex flex-col items-end gap-2 flex-1 min-w-0">
+          <!-- Meerkeuze: aangevinkte types; #vloergeleider bewaart de samenvatting (compatibel met oude dossiers) -->
+          <input type="hidden" id="vloergeleider" value="Zonder">
+          <div id="vloergeleider-group" class="vg-chips" role="group" aria-labelledby="vloergeleider-row">
+            <label class="vg-chip is-on"><input type="checkbox" id="vg-zonder" data-value="Zonder" checked><span data-i18n="opt_zonder">Zonder</span></label>
+            <label class="vg-chip"><input type="checkbox" id="vg-u-model" data-value="U-Model"><span>U-Model</span></label>
+            <label class="vg-chip"><input type="checkbox" id="vg-l-model" data-value="L-Model"><span>L-Model</span></label>
+            <label class="vg-chip"><input type="checkbox" id="vg-omega-rail" data-value="Omega-rail"><span>Omega-rail</span></label>
+            <label class="vg-chip"><input type="checkbox" id="vg-u-profiel" data-value="U-profiel"><span>U-profiel</span></label>
+            <label class="vg-chip"><input type="checkbox" id="vg-antipaniek" data-value="Antipaniek"><span>Antipaniek</span></label>
+          </div>
+          <span id="antipaniek-raillengte" class="antipaniek-length" hidden aria-live="polite"></span>
+        </div>
+      </div>
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_slot">Slotmechanisme</div>
+        <select id="slotmechanisme" class="ios-select">
+          <option value="geen" data-i18n="opt_geen_slot">Geen slot</option>
+          <option value="em-fiac">Electromechanisch: FIAC</option>
+          <option value="em-mono">Electromechanisch: Mono-stabiel</option>
+          <option value="em-bi">Electromechanisch: Bi-stabiel</option>
+          <option value="tv100-200">Electromechanisch: TV 100 / TV 200 (Pin/Kleefslot)</option>
+          <option value="vloer-sluitkant" data-i18n="opt_vloer_sluit">Vloerslot: Aan Sluitkant</option>
+          <option value="vloer-centraal" data-i18n="opt_vloer_centraal">Vloerslot: Centraal (Midden)</option>
+          <option value="haak-profiel" data-i18n="opt_haakslot">Haakslot (Profiel)</option>
+        </select>
+      </div>
+      <div id="vloerslot-positie-group" class="ios-row col-layout hidden">
+        <div class="ios-label mb-1" data-i18n="lbl_pos_vloerslot">Positie & Uitvoering Vloerslot</div>
+        <div class="w-full flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600" data-i18n="lbl_type_uitv">Type uitvoering:</span>
+            <select id="vloerslot-type" class="ios-select !w-32 bg-gray-50 rounded p-1">
+              <option data-i18n="opt_half">Half</option>
+              <option data-i18n="opt_doorlopend">Doorlopend</option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600" data-i18n="lbl_offset">Offset vanaf sluitkant (mm):</span>
+            <input type="number" id="dim-vloerslot-pos" class="ios-input !w-24 bg-gray-50 rounded p-1 text-right" placeholder="mm">
+          </div>
+          <label class="flex items-center gap-2 text-sm mt-1 cursor-pointer">
+            <input type="checkbox" id="vloerboring-nodig" class="accent-[#007AFF] w-4 h-4"> <span data-i18n="lbl_boring">Vloerboring uit te voeren</span>
+          </label>
+        </div>
+      </div>
+      <div id="montageplaat-row" class="ios-row montageplaat-row is-off">
+        <div class="montageplaat-line">
+          <label for="alu-montageplaat" class="ios-label montageplaat-label" data-i18n="lbl_montageplaat">Alu-montageplaat</label>
+          <div class="montageplaat-right">
+            <output id="montageplaat-maat" class="montageplaat-maat is-empty" for="alu-montageplaat dim-tb deurtype openingswijze" aria-live="polite">100 mm x 10 mm x — mm</output>
+            <input type="checkbox" id="alu-montageplaat" class="accent-[#007AFF] w-5 h-5 flex-none">
+          </div>
+        </div>
+        <div id="montageplaat-hint" class="montageplaat-hint" data-i18n="hint_montageplaat" hidden>Montage plaatjes voor glijarm-rail of duwarm niet vergeten!</div>
+      </div>
+    </div>
+
+    <div class="ios-header" data-i18n="hdr_tech">Technieker & Extra</div>
+    <div class="ios-group">
+      <div class="ios-row">
+        <div class="ios-label" data-i18n="lbl_tech_naam">Naam Technieker</div>
+        <input type="text" id="technieker" required class="ios-input" data-i18n-placeholder="ph_tech_naam" placeholder="Jouw naam">
+      </div>
+      <div class="ios-row col-layout">
+        <div class="ios-label" data-i18n="lbl_opm">Opmerkingen</div>
+        <textarea id="opmerkingen" class="ios-input w-full mt-1 resize-none" rows="4" data-i18n-placeholder="ph_opm" placeholder="Eventuele opmerkingen of speciale vereisten..."></textarea>
+      </div>
+    </div>
+
+    <div class="px-4 mt-8 mb-12 no-print">
+      <button type="button" data-action="print" class="w-full bg-[#007AFF] text-white font-semibold text-lg py-3 rounded-xl shadow-sm hover:bg-blue-600 transition-colors" data-i18n="btn_gen_pdf">
+        Genereer PDF / Print
+      </button>
+    </div>
+
+  </form>
+
+  <!-- Voettekst voor afdrukken (bestandsnaam + paginanummer, zie styles.css) -->
+  <div class="print-footer"><span id="print-footer-filename"></span> • Page <span class="page-number"></span></div>
+
+  <script src="js/core.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/ral.js"></script>
+  <script src="js/visual.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/dossiers.js"></script>
+  <script src="js/print.js"></script>
+  <script src="js/ios-profile.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
